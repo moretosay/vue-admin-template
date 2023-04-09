@@ -45,7 +45,7 @@ module.exports = [
     response: config => {
       const items = data.items
       return {
-        code: 20000,
+        code: '000',
         data: {
           total: items.length,
           items: items
@@ -77,7 +77,7 @@ module.exports = [
 
 
       return {
-        code: 20000,
+        code: '000',
         data: {
           total: mockList.length,
           items: pageList

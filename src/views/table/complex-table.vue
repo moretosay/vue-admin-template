@@ -111,13 +111,13 @@
 
         <el-form-item label="营业开始时间" prop="businessStartTime" label-width="120px">
           <el-col :span="11">
-            <el-time-picker v-model="temp.businessStartTime" type="fixed-time" placeholder="请选择开始时间" style="width: 200px;" />
+            <el-input v-model="temp.businessStartTime" placeholder="如 09:00" style="width: 200px;" />
           </el-col>
         </el-form-item>
 
         <el-form-item label="营业结束时间" prop="businessEndTime" label-width="120px">
           <el-col :span="11">
-            <el-time-picker v-model="temp.businessEndTime" type="fixed-time" placeholder="请选择结束时间" style="width: 200px;" />
+            <el-input v-model="temp.businessEndTime" placeholder="如 22:00" style="width: 200px;" />
           </el-col>
         </el-form-item>
 
@@ -326,6 +326,7 @@ export default {
           this.temp.author = 'vue-admin-template'
           // var jsonStr = '{"name":"1"}'
           console.log('aaa' + JSON.stringify(this.temp))
+          console.log('bbb' + this.temp.businessStartTime)
           createArticle(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false

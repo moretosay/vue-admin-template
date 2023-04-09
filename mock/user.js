@@ -41,7 +41,7 @@ module.exports = [
       }
 
       return {
-        code: 20000,
+        code: '000',
         data: token
       }
     }
@@ -64,7 +64,7 @@ module.exports = [
       }
 
       return {
-        code: 20000,
+        code: '000',
         data: info
       }
     }
@@ -76,7 +76,7 @@ module.exports = [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: '000',
         data: 'success'
       }
     }
@@ -94,7 +94,7 @@ module.exports = [
   //     console.log('2222222' + process.env.NODE_ENV)
   //
   //     return {
-  //       code: 20000,
+  //       code: '000',
   //       data: {
   //         total: 0,
   //         items: null

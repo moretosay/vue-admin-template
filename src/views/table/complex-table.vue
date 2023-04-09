@@ -293,8 +293,10 @@ export default {
   },
   methods: {
     getList() {
-      // console.log('2222222' + process.env.NODE_ENV)
       this.listLoading = true
+      this.listQuery.pageNum = 1
+      this.listQuery.pageSize = 2
+      console.log('2222222' + JSON.stringify(this.listQuery))
       fetchList(this.listQuery).then(response => {
         this.list = response.data.items
         this.total = response.data.total
@@ -356,7 +358,7 @@ export default {
           this.temp.author = 'vue-admin-template'
           // var jsonStr = '{"name":"1"}'
           console.log('aaa' + JSON.stringify(this.temp))
-          console.log('bbb' + this.temp.businessStartTime)
+          // console.log('bbb' + this.temp.businessStartTime)
           createArticle(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false

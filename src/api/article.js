@@ -1,10 +1,10 @@
 import request from '@/utils/request'
 
-export function fetchList(query) {
+export function fetchList(data) {
   return request({
     url: 'http://localhost:5000/seller/findSellerList',
-    method: 'get',
-    params: query
+    method: 'post',
+    data
   })
 }
 

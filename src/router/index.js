@@ -52,7 +52,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '商家后台管理系统', icon: 'dashboard' }
     }]
   },
 
@@ -64,7 +64,32 @@ export const constantRoutes = [
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: '商家管理', icon: 'form' }
+        meta: { title: '基本信息管理', icon: 'form' }
+      }
+    ]
+  },
+
+  {
+    path: '/table',
+    component: Layout,
+    redirect: '/table/complex-table',
+    name: 'Table',
+    meta: {
+      title: '基本信息管理',
+      icon: 'table'
+    },
+    children: [
+      {
+        path: 'complex-table',
+        component: () => import('@/views/table/complex-table'),
+        name: 'ComplexTable',
+        meta: { title: '商家管理' }
+      },
+      {
+        path: 'table',
+        name: 'Table',
+        component: () => import('@/views/table/index'),
+        meta: { title: '订单查询', icon: 'table' }
       }
     ]
   },
@@ -81,8 +106,7 @@ export const constantRoutes = [
         name: 'Table',
         component: () => import('@/views/table/index'),
         meta: { title: '订单查询', icon: 'table' }
-      }
-      ,
+      },
       {
         path: 'tree',
         name: 'Tree',

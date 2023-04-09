@@ -64,8 +64,8 @@
         <!--<el-input v-model="form.desc" type="textarea" />-->
       <!--</el-form-item>-->
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">Create</el-button>
-        <el-button @click="onCancel">Cancel</el-button>
+        <el-button type="primary" @click="onSubmit">新增商家</el-button>
+        <el-button @click="onCancel">返回</el-button>
       </el-form-item>
     </el-form>
   </div>

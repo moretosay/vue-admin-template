@@ -81,4 +81,25 @@ module.exports = [
       }
     }
   }
+
+  // ,
+  //
+  // // get user info
+  // {
+  //   url: '/vue-admin-template/article/list\.*',
+  //   type: 'get',
+  //   response: config => {
+  //     const { token } = config.query
+  //     const info = users[token]
+  //     console.log('2222222' + process.env.NODE_ENV)
+  //
+  //     return {
+  //       code: 20000,
+  //       data: {
+  //         total: 0,
+  //         items: null
+  //       }
+  //     }
+  //   }
+  // }
 ]

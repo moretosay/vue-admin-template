@@ -2,27 +2,27 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-      </el-select>
-      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select>
+      <!--<el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">-->
+        <!--<el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />-->
+      <!--</el-select>-->
+      <!--<el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">-->
+        <!--<el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />-->
+      <!--</el-select>-->
+      <!--<el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">-->
+        <!--<el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />-->
+      <!--</el-select>-->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate" >
         添加商家
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出
       </el-button>
-      <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
-        审核人
-      </el-checkbox>
+      <!--<el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">-->
+        <!--审核人-->
+      <!--</el-checkbox>-->
     </div>
 
     <el-table
@@ -35,9 +35,39 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="ID" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column label="商家ID" prop="id" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="商家名称" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="商家简介" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.summary }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="营业开始时间" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.businessStartTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="营业结束时间" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.businessEndTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="最小起送金额" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.minAmount }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="配送费" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.expressFee }}</span>
         </template>
       </el-table-column>
       <!--<el-table-column label="日期" width="150px" align="center">-->
@@ -45,33 +75,33 @@
           <!--<span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
         <!--</template>-->
       <!--</el-table-column>-->
-      <el-table-column label="名称" min-width="150px">
-        <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
-          <el-tag>{{ row.type | typeFilter }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="作者" width="110px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
-        <template slot-scope="{row}">
-          <span style="color:red;">{{ row.reviewer }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="星级" width="80px">
-        <template slot-scope="{row}">
-          <svg-icon v-for="n in + row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>
-      <el-table-column label="浏览数" align="center" width="95">
-        <template slot-scope="{row}">
-          <span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>
-          <span v-else>0</span>
-        </template>
-      </el-table-column>
+      <!--<el-table-column label="名称" min-width="150px">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>-->
+          <!--<el-tag>{{ row.type | typeFilter }}</el-tag>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="作者" width="110px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.author }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span style="color:red;">{{ row.reviewer }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="星级" width="80px">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<svg-icon v-for="n in + row.importance" :key="n" icon-class="star" class="meta-item__icon" />-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="浏览数" align="center" width="95">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>-->
+          <!--<span v-else>0</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
       <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
@@ -124,7 +154,7 @@
         <el-form-item label="最小起送金额" prop="minAmount" label-width="120px">
           <el-input v-model="temp.minAmount" class="minAmount" placeholder="请输入最小起送金额" style="width: 200px;"/> 元
         </el-form-item>
-        <el-form-item label="# 配送费" label-width="120px" align="left">
+        <el-form-item label="# 配送费" prop="expressFee" label-width="120px" align="left">
           <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;"/> 元
         </el-form-item>
 
@@ -240,8 +270,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: '修改基本信息',
+        create: '添加基本信息'
       },
       dialogPvVisible: false,
       pvData: [],

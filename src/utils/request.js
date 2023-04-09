@@ -3,6 +3,8 @@ import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
+// axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
+
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -21,6 +23,8 @@ service.interceptors.request.use(
       // please modify it according to the actual situation
       config.headers['X-Token'] = getToken()
     }
+    console.log('request config:' + JSON.stringify(config.headers))
+    // console.log('request:' + JSON.stringify(request.data))
     return config
   },
   error => {

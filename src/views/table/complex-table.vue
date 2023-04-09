@@ -40,11 +40,11 @@
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="日期" width="150px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
+      <!--<el-table-column label="日期" width="150px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
       <el-table-column label="名称" min-width="150px">
         <template slot-scope="{row}">
           <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
@@ -101,28 +101,55 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
+
+        <el-form-item label="商家名称" prop="name" label-width="120px" >
+          <el-input v-model="temp.name" placeholder="请输入商家名称" style="width: 200px;" />
         </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
+        <el-form-item label="商家简介" prop = "summary" label-width="120px">
+          <el-input v-model="temp.summary" class="summary" placeholder="请输入商家简介" style="width: 200px;"/>
         </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
+
+        <el-form-item label="营业开始时间" prop="businessStartTime" label-width="120px">
+          <el-col :span="11">
+            <el-time-picker v-model="temp.businessStartTime" type="fixed-time" placeholder="请选择开始时间" style="width: 200px;" />
+          </el-col>
         </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
+
+        <el-form-item label="营业结束时间" prop="businessEndTime" label-width="120px">
+          <el-col :span="11">
+            <el-time-picker v-model="temp.businessEndTime" type="fixed-time" placeholder="请选择结束时间" style="width: 200px;" />
+          </el-col>
         </el-form-item>
-        <el-form-item label="Imp">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
+
+        <el-form-item label="最小起送金额" prop="minAmount" label-width="120px">
+          <el-input v-model="temp.minAmount" class="minAmount" placeholder="请输入最小起送金额" style="width: 200px;"/> 元
         </el-form-item>
-        <el-form-item label="Remark">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+        <el-form-item label="# 配送费" label-width="120px" align="left">
+          <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;"/> 元
         </el-form-item>
+
+        <!--<el-form-item label="Type" prop="type">-->
+          <!--<el-select v-model="temp.type" class="filter-item" placeholder="Please select">-->
+            <!--<el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />-->
+          <!--</el-select>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="Date" prop="timestamp">-->
+          <!--<el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="Title" prop="title">-->
+          <!--<el-input v-model="temp.title" />-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="Status">-->
+          <!--<el-select v-model="temp.status" class="filter-item" placeholder="Please select">-->
+            <!--<el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />-->
+          <!--</el-select>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="Imp">-->
+          <!--<el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="Remark">-->
+          <!--<el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />-->
+        <!--</el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -149,7 +176,7 @@
 <script>
 import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+// import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const calendarTypeOptions = [
@@ -219,9 +246,14 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        // title: [{ required: true, message: 'title is required', trigger: 'blur' }],
+        name: [{ required: true, message: '商家名称必填', trigger: 'blur' }],
+        summary: [{ required: true, message: '商家简介必填', trigger: 'blur' }],
+        businessStartTime: [{ required: true, message: '营业开始时间必填', trigger: 'change' }],
+        businessEndTime: [{ required: true, message: '营业结束时间必填', trigger: 'change' }],
+        minAmount: [{ required: true, message: '最小起送金额必填', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -292,6 +324,8 @@ export default {
         if (valid) {
           this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
           this.temp.author = 'vue-admin-template'
+          // var jsonStr = '{"name":"1"}'
+          console.log('aaa' + JSON.stringify(this.temp))
           createArticle(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -362,15 +396,15 @@ export default {
         this.downloadLoading = false
       })
     },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
-    },
+    // formatJson(filterVal) {
+    //   return this.list.map(v => filterVal.map(j => {
+    //     if (j === 'timestamp') {
+    //       return parseTime(v[j])
+    //     } else {
+    //       return v[j]
+    //     }
+    //   }))
+    // },
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'

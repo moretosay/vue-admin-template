@@ -25,8 +25,12 @@ export function fetchPv(pv) {
 }
 
 export function createArticle(data) {
+  console.log('article createArticle:' + data)
   return request({
-    url: '/vue-admin-template/article/create',
+    url: 'http://localhost:5000/seller/addSellerInfo',
+    // headers: {
+    //   'Content-Type': 'application/x-www-form-urlencoded'
+    // },
     method: 'post',
     data
   })

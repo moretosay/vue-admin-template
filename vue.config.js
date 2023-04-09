@@ -36,6 +36,19 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    // proxy:{
+    //   // 配置访问后端跨域解决，通过前缀来实现，也不影响之前的mock方式
+    //   '^/api':{   //'api'就等于target，在链接里访问/api等同于http:/182.xx.xx.xx:8888/
+    //     target:'http://localhost:5000/',     //服务器的接口地址
+    //     secure: false,                       //如果是https，需要开启这个选项
+    //     changeOrigin: true,                  //是否跨域请求？ture
+    //     pathRewrite:{
+    //       '^/api':''
+    //       //如果真实接口里包含了/api，就需要这样配置 '^/api':'api/'
+    //       //等价于/^api=/api+api==http://182.xx.xx.xxx:8888/api
+    //     }
+    //   }
+    // },
     before: require('./mock/mock-server.js')
   },
   configureWebpack: {

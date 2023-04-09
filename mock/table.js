@@ -73,7 +73,7 @@ module.exports = [
       }
 
       const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
-      console.log('666666' + process.env.NODE_ENV)
+      // console.log('666666 ' + process.env.NODE_ENV)
 
 
       return {

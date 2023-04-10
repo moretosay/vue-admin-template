@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 
 export function addSellerInfo(data) {
-  console.log('article createArticle:' + data)
   return request({
     url: 'http://localhost:5000/seller/addSellerInfo',
     // headers: {

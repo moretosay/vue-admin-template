@@ -94,10 +94,16 @@
           <el-input v-model="temp.name" placeholder="请输入类目名称" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="checkList" label-width="120px" >
-          <el-checkbox-group v-model="temp.checkList">
-            <el-checkbox :label="item.name+` [商家ID:`+item.sellerId+`]`" v-for="item in sellerList" :key="item.sellerId" />
+        <el-form-item label="关联商家" prop="checkSellerIdList" label-width="120px" >
+          <el-checkbox-group v-model="temp.checkSellerIdList">
+            <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId" >
+              <span>{{ item.name }} [商家ID:{{ item.sellerId }}]</span>
+            </el-checkbox>
           </el-checkbox-group>
+        </el-form-item>
+
+        <el-form-item label="# 友情提示：" label-width="120px" >
+          <span style="color: red" >当您是多个商家的用户，新增类目时可关联多个商家，生成多条类目，减少重复操作！</span>
         </el-form-item>
 
       </el-form>
@@ -115,7 +121,7 @@
 </template>
 
 <script>
-import { addSellerInfo, editSellerInfo, deleteSellerInfo, findSellerList } from '@/api/seller'
+import { addCategoryList, editCategoryInfo, deleteCategoryInfo, findCategoryList } from '@/api/seller-category'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -149,7 +155,7 @@ export default {
         sort: '+id'
       },
       // calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       sellerList: [],
@@ -171,7 +177,7 @@ export default {
       pvData: [],
       rules: {
         name: [{ required: true, message: '类目名称必填', trigger: 'blur' }],
-        checkList: [{ required: true, message: '商家必选', trigger: 'change' }]
+        checkSellerIdList: [{ required: true, message: '商家必选', trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -187,7 +193,7 @@ export default {
         pageSize: this.listQuery.limit,
         name: this.listQuery.name
       }
-      findSellerList(requestBody).then(response => {
+      findCategoryList(requestBody).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         setTimeout(() => {
@@ -222,7 +228,7 @@ export default {
         title: '',
         status: 'published',
         type: '',
-        checkList: []
+        checkSellerIdList: []
       }
     },
     handleCreate() {
@@ -237,9 +243,9 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addSellerInfo(this.temp).then(response => {
+          addCategoryList(this.temp).then(response => {
             // 将最新sellerId赋值展示
-            this.temp.sellerId = response.data
+            // this.temp.sellerId = response.data
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -265,7 +271,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          editSellerInfo(tempData).then(() => {
+          editCategoryInfo(tempData).then(() => {
             const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
             // 展示框中更新对应记录
             this.list.splice(index, 1, this.temp)
@@ -283,7 +289,7 @@ export default {
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj
       var requestParam = { sellerId: this.temp.sellerId }
-      deleteSellerInfo(requestParam).then(() => {
+      deleteCategoryInfo(requestParam).then(() => {
         this.$notify({
           title: 'Success',
           message: 'Delete Successfully',

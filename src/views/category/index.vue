@@ -6,7 +6,7 @@
         搜索
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate" >
-        新增商家
+        新增类目
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出
@@ -90,30 +90,14 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="商家名称" prop="name" label-width="120px" >
-          <el-input v-model="temp.name" placeholder="请输入商家名称" style="width: 200px;" />
-        </el-form-item>
-        <el-form-item label="商家简介" prop = "summary" label-width="120px">
-          <el-input v-model="temp.summary" class="summary" placeholder="请输入商家简介" style="width: 200px;"/>
+        <el-form-item label="类目名称" prop="name" label-width="120px" >
+          <el-input v-model="temp.name" placeholder="请输入类目名称" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="营业开始时间" prop="businessStartTime" label-width="120px">
-          <el-col :span="11">
-            <el-input v-model="temp.businessStartTime" placeholder="如 09:00" style="width: 200px;" />
-          </el-col>
-        </el-form-item>
-
-        <el-form-item label="营业结束时间" prop="businessEndTime" label-width="120px">
-          <el-col :span="11">
-            <el-input v-model="temp.businessEndTime" placeholder="如 22:00" style="width: 200px;" />
-          </el-col>
-        </el-form-item>
-
-        <el-form-item label="最小起送金额" prop="minAmount" label-width="120px">
-          <el-input v-model="temp.minAmount" class="minAmount" placeholder="请输入最小起送金额" style="width: 200px;"/> 元
-        </el-form-item>
-        <el-form-item label="# 配送费" prop="expressFee" label-width="120px" align="left">
-          <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;"/> 元
+        <el-form-item label="关联商家" prop="checkList" label-width="120px" >
+          <el-checkbox-group v-model="temp.checkList">
+            <el-checkbox :label="item.name+` [商家ID:`+item.sellerId+`]`" v-for="item in sellerList" :key="item.sellerId" />
+          </el-checkbox-group>
         </el-form-item>
 
       </el-form>
@@ -136,19 +120,6 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
-// const calendarTypeOptions = [
-//   { key: 'CN', display_name: 'China' },
-//   { key: 'US', display_name: 'USA' },
-//   { key: 'JP', display_name: 'Japan' },
-//   { key: 'EU', display_name: 'Eurozone' }
-// ]
-//
-// // arr to obj, such as { CN : "China", US : "USA" }
-// const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-//   acc[cur.key] = cur.display_name
-//   return acc
-// }, {})
-
 export default {
   name: 'Category',
   components: { Pagination },
@@ -162,10 +133,6 @@ export default {
       }
       return statusMap[status]
     }
-    // ,
-    // typeFilter(type) {
-    //   return calendarTypeKeyValue[type]
-    // }
   },
   data() {
     return {
@@ -181,18 +148,17 @@ export default {
         type: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
       // calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
+      sellerList: [],
       temp: {
         id: undefined,
         importance: 1,
         remark: '',
         timestamp: new Date(),
         title: '',
-        type: '',
         status: 'published'
       },
       dialogFormVisible: false,
@@ -204,11 +170,8 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        name: [{ required: true, message: '商家名称必填', trigger: 'blur' }],
-        summary: [{ required: true, message: '商家简介必填', trigger: 'blur' }],
-        businessStartTime: [{ required: true, message: '营业开始时间必填', trigger: 'change' }],
-        businessEndTime: [{ required: true, message: '营业结束时间必填', trigger: 'change' }],
-        minAmount: [{ required: true, message: '最小起送金额必填', trigger: 'blur' }]
+        name: [{ required: true, message: '类目名称必填', trigger: 'blur' }],
+        checkList: [{ required: true, message: '商家必选', trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -258,10 +221,12 @@ export default {
         timestamp: new Date(),
         title: '',
         status: 'published',
-        type: ''
+        type: '',
+        checkList: []
       }
     },
     handleCreate() {
+      this.sellerList = this.list
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true

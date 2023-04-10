@@ -313,13 +313,6 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
-    },
     sortChange(data) {
       const { prop, order } = data
       if (prop === 'id') {
@@ -419,6 +412,27 @@ export default {
         // 展示框中删除对应记录
         this.list.splice(index, 1)
       })
+    },
+    handleModifyStatus(row, status) {
+      this.temp = Object.assign({}, row) // copy obj
+      var requestBody = {
+        sellerId: this.temp.sellerId,
+        status: status
+      }
+      this.temp.status = status
+      editSellerInfo(requestBody).then(() => {
+        const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
+        // 展示框中更新对应记录
+        this.list.splice(index, 1, this.temp)
+        this.dialogFormVisible = false
+        this.$notify({
+          title: 'Success',
+          message: status === 'published'?'商家发布成功':'商家已下线',
+          type: 'success',
+          duration: 2000
+        })
+      })
+
     },
     // handleFetchPv(pv) {
     //   fetchPv(pv).then(response => {

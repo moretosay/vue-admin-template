@@ -293,11 +293,6 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          // this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          // this.temp.author = 'vue-admin-template'
-          // var jsonStr = '{"name":"1"}'
-          // console.log('aaa' + JSON.stringify(this.temp))
-          // console.log('bbb' + this.temp.businessStartTime)
           addSellerInfo(this.temp).then(response => {
             // 将最新sellerId赋值展示
             this.temp.sellerId = response.data
@@ -326,10 +321,6 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          // console.log('111111:' + JSON.stringify(tempData))
-          // console.log('111111:' + JSON.stringify(this.temp.id))
-          // console.log('222222:' + JSON.stringify(this.temp.sellerId))
           editSellerInfo(tempData).then(() => {
             const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
             // 展示框中更新对应记录
@@ -380,17 +371,13 @@ export default {
       })
 
     },
-    // handleFetchPv(pv) {
-    //   fetchPv(pv).then(response => {
-    //     this.pvData = response.data.pvData
-    //     this.dialogPvVisible = true
-    //   })
-    // },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['商家ID', '商家名称', '商家简介', '营业开始时间', '营业结束时间',
+                    '最小起送金额', '配送费', 'status']
+        const filterVal = ['sellerId', 'name', 'summary', 'businessStartTime', 'businessEndTime',
+                    'minAmount', 'expressFee', 'status']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -400,18 +387,18 @@ export default {
         this.downloadLoading = false
       })
     },
-    // formatJson(filterVal) {
-    //   return this.list.map(v => filterVal.map(j => {
-    //     if (j === 'timestamp') {
-    //       return parseTime(v[j])
-    //     } else {
-    //       return v[j]
-    //     }
-    //   }))
-    // },
+    formatJson(filterVal) {
+      return this.list.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
     getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
+      // const sort = this.listQuery.sort
+      // return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }

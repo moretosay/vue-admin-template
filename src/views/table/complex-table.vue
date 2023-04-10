@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.name" placeholder="请输入商家名称关键字检索" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!--<el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">-->
         <!--<el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />-->
       <!--</el-select>-->
@@ -242,7 +242,8 @@ export default {
       this.listLoading = true
       var requestBody = {
         pageNum: this.listQuery.page,
-        pageSize: this.listQuery.limit
+        pageSize: this.listQuery.limit,
+        name: this.listQuery.name
       }
       findSellerList(requestBody).then(response => {
         this.list = response.data.list

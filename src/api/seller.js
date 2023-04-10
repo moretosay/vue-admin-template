@@ -36,20 +36,3 @@ export function findSellerList(data) {
   })
 }
 
-// export function fetchArticle(id) {
-//   return request({
-//     url: '/vue-admin-template/article/detail',
-//     method: 'get',
-//     params: { id }
-//   })
-// }
-//
-// export function fetchPv(pv) {
-//   return request({
-//     url: '/vue-admin-template/article/pv',
-//     method: 'get',
-//     params: { pv }
-//   })
-// }
-
-

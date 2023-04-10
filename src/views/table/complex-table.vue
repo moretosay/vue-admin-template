@@ -1,16 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="请输入商家名称关键字检索" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <!--<el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">-->
-        <!--<el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />-->
-      <!--</el-select>-->
-      <!--<el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">-->
-        <!--<el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />-->
-      <!--</el-select>-->
-      <!--<el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">-->
-        <!--<el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />-->
-      <!--</el-select>-->
+      <el-input v-model="listQuery.name" placeholder="请输入商家名称关键字检索" style="width: 220px; height: 50px" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -20,9 +11,6 @@
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出
       </el-button>
-      <!--<el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">-->
-        <!--审核人-->
-      <!--</el-checkbox>-->
     </div>
 
     <el-table
@@ -35,49 +23,49 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="商家ID" prop="id" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column label="商家ID" prop="id" align="center" width="80px" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.sellerId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家名称" width="110px" align="center">
+      <el-table-column label="商家名称" width="130px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家简介" width="110px" align="center">
+      <el-table-column label="商家简介" width="180px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.summary }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="营业开始时间" width="110px" align="center">
+      <el-table-column label="营业开始时间" width="130px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.businessStartTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="营业结束时间" width="110px" align="center">
+      <el-table-column label="营业结束时间" width="130px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.businessEndTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最小起送金额" width="110px" align="center">
+      <el-table-column label="最小起送金额" width="120px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.minAmount }}</span>
+          <span>{{ row.minAmount }}</span> 元
         </template>
       </el-table-column>
-      <el-table-column label="配送费" width="110px" align="center">
+      <el-table-column label="配送费" width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.expressFee }}</span>
+          <span>{{ row.expressFee }}</span> 元
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="100">
+      <el-table-column label="状态" class-name="status-col" width="105px" align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
@@ -139,37 +127,27 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-// import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
-import { addSellerInfo, editSellerInfo, deleteSellerInfo, findSellerList } from '@/api/article'
+import { addSellerInfo, editSellerInfo, deleteSellerInfo, findSellerList } from '@/api/seller'
 import waves from '@/directive/waves' // waves directive
-// import { parseTime } from '@/utils'
+import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
+// const calendarTypeOptions = [
+//   { key: 'CN', display_name: 'China' },
+//   { key: 'US', display_name: 'USA' },
+//   { key: 'JP', display_name: 'Japan' },
+//   { key: 'EU', display_name: 'Eurozone' }
+// ]
+//
+// // arr to obj, such as { CN : "China", US : "USA" }
+// const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
+//   acc[cur.key] = cur.display_name
+//   return acc
+// }, {})
 
 export default {
   name: 'ComplexTable',
@@ -203,7 +181,7 @@ export default {
         sort: '+id'
       },
       importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
+      // calendarTypeOptions,
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
@@ -334,11 +312,11 @@ export default {
             })
           })
         }
-    })
+      })
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj
-      var requestParam = { sellerId: this.temp.sellerId}
+      var requestParam = { sellerId: this.temp.sellerId }
       deleteSellerInfo(requestParam).then(() => {
         this.$notify({
           title: 'Success',
@@ -364,20 +342,17 @@ export default {
         this.dialogFormVisible = false
         this.$notify({
           title: 'Success',
-          message: status === 'published'?'商家发布成功':'商家已下线',
+          message: status === 'published' ? '商家发布成功' : '商家已下线',
           type: 'success',
           duration: 2000
         })
       })
-
     },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['商家ID', '商家名称', '商家简介', '营业开始时间', '营业结束时间',
-                    '最小起送金额', '配送费', 'status']
-        const filterVal = ['sellerId', 'name', 'summary', 'businessStartTime', 'businessEndTime',
-                    'minAmount', 'expressFee', 'status']
+        const tHeader = ['商家ID', '商家名称', '商家简介', '营业开始时间', '营业结束时间', '最小起送金额', '配送费', 'status']
+        const filterVal = ['sellerId', 'name', 'summary', 'businessStartTime', 'businessEndTime', 'minAmount', 'expressFee', 'status']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,

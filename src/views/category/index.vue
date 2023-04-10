@@ -291,16 +291,17 @@ export default {
             sellerId: this.temp.radioSellerId
           }
           editCategoryInfo(requestBody).then(() => {
-            const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
-            // 展示框中更新对应记录
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
+            // const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
+            // // 展示框中更新对应记录
+            // this.list.splice(index, 1, this.temp)
+            // this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
               message: 'Update Successfully',
               type: 'success',
               duration: 2000
             })
+            this.reload()
           })
         }
       })

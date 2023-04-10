@@ -23,59 +23,59 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="商家ID" prop="id" align="center" width="80px" :class-name="getSortClass('id')">
+      <el-table-column label="类目ID" prop="id" align="center" width="80px" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.sellerId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家名称" width="130px" align="center">
+      <el-table-column label="类目名称" width="130px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家简介" width="180px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.summary }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="营业开始时间" width="130px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.businessStartTime }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="营业结束时间" width="130px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.businessEndTime }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="最小起送金额" width="120px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.minAmount }}</span> 元
-        </template>
-      </el-table-column>
-      <el-table-column label="配送费" width="80px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.expressFee }}</span> 元
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="105px" align="center">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
+      <!--<el-table-column label="商家简介" width="180px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.summary }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="营业开始时间" width="130px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.businessStartTime }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="营业结束时间" width="130px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.businessEndTime }}</span>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="最小起送金额" width="120px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.minAmount }}</span> 元-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="配送费" width="80px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<span>{{ row.expressFee }}</span> 元-->
+        <!--</template>-->
+      <!--</el-table-column>-->
+      <!--<el-table-column label="状态" class-name="status-col" width="105px" align="center">-->
+        <!--<template slot-scope="{row}">-->
+          <!--<el-tag :type="row.status | statusFilter">-->
+            <!--{{ row.status }}-->
+          <!--</el-tag>-->
+        <!--</template>-->
+      <!--</el-table-column>-->
       <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            发布
-          </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-            下线
-          </el-button>
+          <!--<el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">-->
+            <!--发布-->
+          <!--</el-button>-->
+          <!--<el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">-->
+            <!--下线-->
+          <!--</el-button>-->
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>
@@ -122,6 +122,8 @@
 
 <script>
 import { addCategoryList, editCategoryInfo, deleteCategoryInfo, findCategoryList } from '@/api/seller-category'
+import { findSellerList, editSellerInfo } from '@/api/seller'
+
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -232,7 +234,20 @@ export default {
       }
     },
     handleCreate() {
-      this.sellerList = this.list
+      // 新增类目时，查询当前用户下的商家，后续进行权限控制  todo
+      // this.sellerList = this.list
+      var requestBody = {
+        pageNum: 1,
+        pageSize: 20// 不可能超过20个商家吧！
+      }
+      findSellerList(requestBody).then(response => {
+        this.sellerList = response.data.list
+        // this.total = response.data.total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
+
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true

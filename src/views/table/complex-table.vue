@@ -95,6 +95,7 @@
       </el-table-column>
     </el-table>
 
+    <!-- v-show：数据>0显示 page：第几页，对应后端pageNum，limit：每页记录数，对应后端pageSize -->
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <!-- :visible.sync，vue标签，设置动态的显示内容与否 -->
@@ -195,7 +196,7 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 20,
+        limit: 10,
         importance: undefined,
         title: undefined,
         type: undefined,
@@ -239,14 +240,13 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
-      this.listQuery.pageNum = 1
-      this.listQuery.pageSize = 2
-      console.log('2222222' + JSON.stringify(this.listQuery))
-      findSellerList(this.listQuery).then(response => {
+      var requestBody = {
+        pageNum: this.listQuery.page,
+        pageSize: this.listQuery.limit
+      }
+      findSellerList(requestBody).then(response => {
         this.list = response.data.list
         this.total = response.data.total
-
-        // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)

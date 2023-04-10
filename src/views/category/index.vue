@@ -67,12 +67,20 @@
           <el-input v-model="temp.name" placeholder="请输入类目名称" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="checkSellerIdList" label-width="120px" >
-          <el-checkbox-group v-model="temp.checkSellerIdList">
+        <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'" >
+          <el-checkbox-group v-model="temp.checkBoxSellerIdList">
             <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId" >
               <span>{{ item.name }} [商家ID:{{ item.sellerId }}]</span>
             </el-checkbox>
           </el-checkbox-group>
+        </el-form-item>
+
+        <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'" >
+          <el-radio-group v-model="temp.radioSellerId">
+            <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId" >
+              <span>{{ item.name }} [商家ID:{{ item.sellerId }}]</span>
+            </el-radio>
+          </el-radio-group>
         </el-form-item>
 
         <el-form-item label="# 友情提示：" label-width="120px" >
@@ -146,14 +154,15 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑基本信息',
-        create: '新增基本信息'
+        update: '编辑类目',
+        create: '新增类目'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
         name: [{ required: true, message: '类目名称必填', trigger: 'blur' }],
-        checkSellerIdList: [{ required: true, message: '商家必选', trigger: 'change' }]
+        checkBoxSellerIdList: [{ required: true, message: '商家必选', trigger: 'change' }],
+        radioSellerId: [{ required: true, message: '商家必选', trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -204,7 +213,7 @@ export default {
         title: '',
         status: 'published',
         type: '',
-        checkSellerIdList: []
+        checkBoxSellerIdList: []
       }
     },
     handleCreate() {
@@ -231,7 +240,11 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addCategoryList(this.temp).then(response => {
+          var requestBody = {
+            name: this.temp.name,
+            sellerIdList: this.temp.checkBoxSellerIdList
+          }
+          addCategoryList(requestBody).then(response => {
             // 批量新增不将多条类目新增到原表中，还是考虑刷新页面
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -248,6 +261,19 @@ export default {
       })
     },
     handleUpdate(row) {
+      // 编辑类目时，查询当前用户下的商家，后续进行权限控制  todo
+      // this.sellerList = this.list
+      var requestBody = {
+        pageNum: 1,
+        pageSize: 20// 不可能超过20个商家吧！
+      }
+      findSellerList(requestBody).then(response => {
+        this.sellerList = response.data.list
+        // this.total = response.data.total
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
       this.temp = Object.assign({}, row) // copy obj
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
@@ -259,8 +285,12 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          editCategoryInfo(tempData).then(() => {
+          var requestBody = {
+            categoryId: this.temp.categoryId,
+            name: this.temp.name,
+            sellerId: this.temp.radioSellerId
+          }
+          editCategoryInfo(requestBody).then(() => {
             const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
             // 展示框中更新对应记录
             this.list.splice(index, 1, this.temp)
@@ -286,8 +316,8 @@ export default {
           duration: 2000
         })
         // // 展示框中删除对应记录
-        // this.list.splice(index, 1)
-        this.reload()
+        this.list.splice(index, 1)
+        // this.reload()
       })
     },
     handleModifyStatus(row, status) {

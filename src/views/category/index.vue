@@ -285,8 +285,9 @@ export default {
           type: 'success',
           duration: 2000
         })
-        // 展示框中删除对应记录
-        this.list.splice(index, 1)
+        // // 展示框中删除对应记录
+        // this.list.splice(index, 1)
+        this.reload()
       })
     },
     handleModifyStatus(row, status) {

@@ -15,7 +15,7 @@
         搜索
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate" >
-        添加商家
+        新增商家
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出
@@ -37,7 +37,7 @@
     >
       <el-table-column label="商家ID" prop="id" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
+          <span>{{ row.sellerId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="商家名称" width="110px" align="center">
@@ -112,10 +112,10 @@
       <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            修改
+            编辑
           </el-button>
           <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            上线
+            发布
           </el-button>
           <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
             下线
@@ -129,6 +129,7 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
+    <!-- :visible.sync，vue标签，设置动态的显示内容与否 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
@@ -204,7 +205,8 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+// import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { addSellerInfo, editSellerInfo, deleteSellerInfo, findSellerList } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 // import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -270,8 +272,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '修改基本信息',
-        create: '添加基本信息'
+        update: '编辑基本信息',
+        create: '新增基本信息'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -297,8 +299,8 @@ export default {
       this.listQuery.pageNum = 1
       this.listQuery.pageSize = 2
       console.log('2222222' + JSON.stringify(this.listQuery))
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
+      findSellerList(this.listQuery).then(response => {
+        this.list = response.data.list
         this.total = response.data.total
 
         // Just to simulate the time of the request
@@ -359,7 +361,7 @@ export default {
           // var jsonStr = '{"name":"1"}'
           console.log('aaa' + JSON.stringify(this.temp))
           // console.log('bbb' + this.temp.businessStartTime)
-          createArticle(this.temp).then(() => {
+          addSellerInfo(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -374,7 +376,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
+      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -385,9 +387,13 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
+          // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
+          // console.log('111111:' + JSON.stringify(tempData))
+          // console.log('111111:' + JSON.stringify(this.temp.id))
+          // console.log('222222:' + JSON.stringify(this.temp.sellerId))
+          editSellerInfo(tempData).then(() => {
+            const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
+            // 展示框中更新对应记录
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -398,23 +404,28 @@ export default {
             })
           })
         }
-      })
+    })
     },
     handleDelete(row, index) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
+      this.temp = Object.assign({}, row) // copy obj
+      var requestParam = { sellerId: this.temp.sellerId}
+      deleteSellerInfo(requestParam).then(() => {
+        this.$notify({
+          title: 'Success',
+          message: 'Delete Successfully',
+          type: 'success',
+          duration: 2000
+        })
+        // 展示框中删除对应记录
+        this.list.splice(index, 1)
       })
-      this.list.splice(index, 1)
     },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
-    },
+    // handleFetchPv(pv) {
+    //   fetchPv(pv).then(response => {
+    //     this.pvData = response.data.pvData
+    //     this.dialogPvVisible = true
+    //   })
+    // },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {

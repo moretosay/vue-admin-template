@@ -150,7 +150,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 // }, {})
 
 export default {
-  name: 'ComplexTable',
+  name: 'Seller',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -161,10 +161,11 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
     }
+    // ,
+    // typeFilter(type) {
+    //   return calendarTypeKeyValue[type]
+    // }
   },
   data() {
     return {

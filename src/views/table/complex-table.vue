@@ -70,38 +70,6 @@
           <span>{{ row.expressFee }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column label="日期" width="150px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="名称" min-width="150px">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>-->
-          <!--<el-tag>{{ row.type | typeFilter }}</el-tag>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="作者" width="110px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span>{{ row.author }}</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span style="color:red;">{{ row.reviewer }}</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="星级" width="80px">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<svg-icon v-for="n in + row.importance" :key="n" icon-class="star" class="meta-item__icon" />-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="浏览数" align="center" width="95">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span v-if="row.pageviews" class="link-type" @click="handleFetchPv(row.pageviews)">{{ row.pageviews }}</span>-->
-          <!--<span v-else>0</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
       <el-table-column label="状态" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
@@ -159,28 +127,6 @@
           <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;"/> 元
         </el-form-item>
 
-        <!--<el-form-item label="Type" prop="type">-->
-          <!--<el-select v-model="temp.type" class="filter-item" placeholder="Please select">-->
-            <!--<el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />-->
-          <!--</el-select>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="Date" prop="timestamp">-->
-          <!--<el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="Title" prop="title">-->
-          <!--<el-input v-model="temp.title" />-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="Status">-->
-          <!--<el-select v-model="temp.status" class="filter-item" placeholder="Please select">-->
-            <!--<el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />-->
-          <!--</el-select>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="Imp">-->
-          <!--<el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="Remark">-->
-          <!--<el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />-->
-        <!--</el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -278,9 +224,6 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        // title: [{ required: true, message: 'title is required', trigger: 'blur' }],
         name: [{ required: true, message: '商家名称必填', trigger: 'blur' }],
         summary: [{ required: true, message: '商家简介必填', trigger: 'blur' }],
         businessStartTime: [{ required: true, message: '营业开始时间必填', trigger: 'change' }],

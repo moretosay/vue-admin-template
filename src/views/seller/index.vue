@@ -9,7 +9,7 @@
         新增商家
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        导出
+        导出商家
       </el-button>
     </div>
 
@@ -48,7 +48,7 @@
           <span>{{ row.businessEndTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最小起送金额" width="120px" align="center">
+      <el-table-column label="最小起送费" width="120px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.minAmount }}</span> 元
         </template>
@@ -109,8 +109,8 @@
           </el-col>
         </el-form-item>
 
-        <el-form-item label="最小起送金额" prop="minAmount" label-width="120px">
-          <el-input v-model="temp.minAmount" class="minAmount" placeholder="请输入最小起送金额" style="width: 200px;"/> 元
+        <el-form-item label="最小起送费" prop="minAmount" label-width="120px">
+          <el-input v-model="temp.minAmount" class="minAmount" placeholder="请输入最小起送费" style="width: 200px;"/> 元
         </el-form-item>
         <el-form-item label="# 配送费" prop="expressFee" label-width="120px" align="left">
           <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;"/> 元
@@ -198,8 +198,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑基本信息',
-        create: '新增基本信息'
+        update: '编辑商家基本信息',
+        create: '新增商家基本信息'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -208,7 +208,7 @@ export default {
         summary: [{ required: true, message: '商家简介必填', trigger: 'blur' }],
         businessStartTime: [{ required: true, message: '营业开始时间必填', trigger: 'change' }],
         businessEndTime: [{ required: true, message: '营业结束时间必填', trigger: 'change' }],
-        minAmount: [{ required: true, message: '最小起送金额必填', trigger: 'blur' }]
+        minAmount: [{ required: true, message: '最小起送费必填', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -352,7 +352,7 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['商家ID', '商家名称', '商家简介', '营业开始时间', '营业结束时间', '最小起送金额', '配送费', 'status']
+        const tHeader = ['商家ID', '商家名称', '商家简介', '营业开始时间', '营业结束时间', '最小起送费', '配送费', 'status']
         const filterVal = ['sellerId', 'name', 'summary', 'businessStartTime', 'businessEndTime', 'minAmount', 'expressFee', 'status']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({

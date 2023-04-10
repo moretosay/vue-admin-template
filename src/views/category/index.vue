@@ -25,7 +25,7 @@
     >
       <el-table-column label="类目ID" prop="id" align="center" width="80px" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.sellerId }}</span>
+          <span>{{ row.categoryId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="类目名称" width="130px" align="center">
@@ -33,38 +33,11 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column label="商家简介" width="180px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span>{{ row.summary }}</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="营业开始时间" width="130px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span>{{ row.businessStartTime }}</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="营业结束时间" width="130px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span>{{ row.businessEndTime }}</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="最小起送金额" width="120px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span>{{ row.minAmount }}</span> 元-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="配送费" width="80px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<span>{{ row.expressFee }}</span> 元-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-      <!--<el-table-column label="状态" class-name="status-col" width="105px" align="center">-->
-        <!--<template slot-scope="{row}">-->
-          <!--<el-tag :type="row.status | statusFilter">-->
-            <!--{{ row.status }}-->
-          <!--</el-tag>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
+      <el-table-column label="关联商家" width="200px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.name }} [商家ID:{{ row.sellerId }}]</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -129,6 +102,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
+  inject: ['reload'],
   name: 'Category',
   components: { Pagination },
   directives: { waves },
@@ -247,7 +221,6 @@ export default {
           this.listLoading = false
         }, 1.5 * 1000)
       })
-
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -259,9 +232,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           addCategoryList(this.temp).then(response => {
-            // 将最新sellerId赋值展示
-            // this.temp.sellerId = response.data
-            this.list.unshift(this.temp)
+            // 批量新增不将多条类目新增到原表中，还是考虑刷新页面
+            // this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -269,6 +241,8 @@ export default {
               type: 'success',
               duration: 2000
             })
+            // 通过子组件inject和调用this.reload，APP组件定义this.reload，和router-view的isRouterAlive等来控制
+            this.reload()
           })
         }
       })
@@ -303,7 +277,7 @@ export default {
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj
-      var requestParam = { sellerId: this.temp.sellerId }
+      var requestParam = { categoryId: this.temp.categoryId }
       deleteCategoryInfo(requestParam).then(() => {
         this.$notify({
           title: 'Success',

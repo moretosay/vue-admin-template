@@ -274,8 +274,13 @@ export default {
           this.listLoading = false
         }, 1.5 * 1000)
       })
+      // todo
       this.temp = Object.assign({}, row) // copy obj
-      // this.temp.timestamp = new Date(this.temp.timestamp)
+      // 此种方式赋值，radioSellerId对应的组件不可修改
+      // this.temp.radioSellerId = this.temp.sellerId
+      // radioSellerId对应的组件可修改
+      this.$set(this.temp,'radioSellerId', this.temp.sellerId)
+        // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {

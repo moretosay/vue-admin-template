@@ -198,8 +198,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑商家基本信息',
-        create: '新增商家基本信息'
+        update: '编辑商家',
+        create: '新增商家'
       },
       dialogPvVisible: false,
       pvData: [],

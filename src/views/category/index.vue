@@ -83,8 +83,8 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="# 友情提示：" label-width="120px" >
-          <span style="color: red" >当您是多个商家的用户，新增类目时可关联多个商家，生成多条类目，减少重复操作！</span>
+        <el-form-item label="* 功能Tip：" label-width="120px" v-if="dialogStatus==='create'" >
+          <span style="color: red" >新增类目时可关联多个商家，生成多条类目！</span>
         </el-form-item>
 
       </el-form>

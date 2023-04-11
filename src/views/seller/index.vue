@@ -28,7 +28,7 @@
           <span>{{ row.sellerId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家名称" width="130px" align="center">
+      <el-table-column label="商家名称" width="130px" align="center" >
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>

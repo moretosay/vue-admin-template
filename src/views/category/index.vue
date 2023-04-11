@@ -33,9 +33,9 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联商家" width="200px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.name }} [商家ID:{{ row.sellerId }}]</span>
+      <el-table-column label="关联商家" width="200px" align="left" header-align="center">
+        <template slot-scope="{row}" style="align-content: left">
+          <span>{{ row.sellerName }} [商家ID:{{ row.sellerId }}]</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">
@@ -106,7 +106,7 @@ import { addCategoryList, editCategoryInfo, deleteCategoryInfo, findCategoryList
 import { findSellerList, editSellerInfo } from '@/api/seller'
 
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
+// import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
@@ -279,8 +279,8 @@ export default {
       // 此种方式赋值，radioSellerId对应的组件不可修改
       // this.temp.radioSellerId = this.temp.sellerId
       // radioSellerId对应的组件可修改
-      this.$set(this.temp,'radioSellerId', this.temp.sellerId)
-        // this.temp.timestamp = new Date(this.temp.timestamp)
+      this.$set(this.temp, 'radioSellerId', this.temp.sellerId)
+      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {

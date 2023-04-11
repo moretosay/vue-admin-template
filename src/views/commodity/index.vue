@@ -43,9 +43,9 @@
           <span>{{ row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联类目" width="200px" align="center">
+      <el-table-column label="关联类目" width="310px" align="left" header-align="center">
         <template slot-scope="{row}">
-          <span>{{ row.name }} [类目ID:{{ row.categoryId }}]</span>
+          <span>{{ row.name }} 【类目ID:{{ row.categoryId }}, 所属商家: {{ row.sellerName }}】</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">

@@ -82,7 +82,7 @@
         <el-form-item label="关联类目" prop="checkBoxCategoryIdList" label-width="120px" v-if="dialogStatus==='create'" >
           <el-checkbox-group v-model="temp.checkBoxCategoryIdList">
             <el-checkbox :label="item.categoryId" v-for="item in categoryList" :key="item.categoryId" >
-              <span>{{ item.name }} [类目ID:{{ item.categoryId }}]</span>
+              <span>{{ item.name }} 【类目ID:{{ item.categoryId }}, 所属商家: {{ item.sellerName }}】</span>
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
@@ -90,7 +90,7 @@
         <el-form-item label="关联类目" prop="radioCategoryId" label-width="120px" v-if="dialogStatus!=='create'" >
           <el-radio-group v-model="temp.radioCategoryId">
             <el-radio :label="item.categoryId" v-for="item in categoryList" :key="item.categoryId" >
-              <span>{{ item.name }} [类目ID:{{ item.categoryId }}]</span>
+              <span>{{ item.name }} 【类目ID:{{ item.categoryId }}, 所属商家: {{ item.sellerName }}】</span>
             </el-radio>
           </el-radio-group>
         </el-form-item>
@@ -230,7 +230,7 @@ export default {
       }
     },
     handleCreate() {
-      // 新增类目时，查询当前用户下的商家，后续进行权限控制  todo
+      // 新增商品时，查询当前用户下的类目，后续进行权限控制  todo
       // this.categoryList = this.list
       var requestBody = {
         pageNum: 1,

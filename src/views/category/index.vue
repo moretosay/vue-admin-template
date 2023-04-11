@@ -35,7 +35,7 @@
       </el-table-column>
       <el-table-column label="关联商家" width="200px" align="left" header-align="center">
         <template slot-scope="{row}" style="align-content: left">
-          <span>{{ row.sellerName }} [商家ID:{{ row.sellerId }}]</span>
+          <span>{{ row.sellerName }} 【商家ID:{{ row.sellerId }}】</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">
@@ -70,7 +70,7 @@
         <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'" >
           <el-checkbox-group v-model="temp.checkBoxSellerIdList">
             <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId" >
-              <span>{{ item.name }} [商家ID:{{ item.sellerId }}]</span>
+              <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
         </el-form-item>
@@ -78,7 +78,7 @@
         <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'" >
           <el-radio-group v-model="temp.radioSellerId">
             <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId" >
-              <span>{{ item.name }} [商家ID:{{ item.sellerId }}]</span>
+              <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-radio>
           </el-radio-group>
         </el-form-item>

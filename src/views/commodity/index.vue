@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="请输入商家名称关键字检索" style="width: 220px; height: 50px" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.name" placeholder="商品名称关键字检索" style="width: 220px; height: 50px" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -43,9 +43,9 @@
           <span>{{ row.price }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联类目" width="310px" align="left" header-align="center">
+      <el-table-column label="关联类目" width="330px" align="left" header-align="center">
         <template slot-scope="{row}">
-          <span>{{ row.name }} 【类目ID:{{ row.categoryId }}, 所属商家: {{ row.sellerName }}】</span>
+          <span>{{ row.categoryName }} 【类目ID:{{ row.categoryId }}, 所属商家: {{ row.sellerName }}】</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">

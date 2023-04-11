@@ -81,6 +81,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/commodity',
+    component: Layout,
+    name: 'Commodity',
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/commodity/index'),
+        name: 'Detail',
+        meta: { title: '商品管理', icon: 'form' }
+      }
+    ]
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

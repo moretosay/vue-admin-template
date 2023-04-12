@@ -36,7 +36,8 @@
       <el-table-column label="Logo" prop="logoPicUrl" width="130px" align="center" >
         <!--scope相当于一行的数据， scope.row相当于当前行的数据对象-->
         <template slot-scope="scope">
-          <el-avatar shape="square" :size="60" :src="scope.row.logoPicUrl"></el-avatar>
+          <el-avatar shape="square" :size="60" :src="scope.row.logoPicUrl" v-if="scope.row.logoPicUrl != null" ></el-avatar>
+          <span v-if="scope.row.logoPicUrl == null" > 待上传</span>
         </template>
       </el-table-column>
       <el-table-column label="商家简介" width="180px" align="center">
@@ -157,6 +158,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
+  inject: ['reload'],
   name: 'Seller',
   components: { Pagination },
   directives: { waves },
@@ -230,6 +232,7 @@ export default {
       }
       findSellerList(requestBody).then(response => {
         this.list = response.data.list
+        console.log('111' + JSON.stringify(this.list))
         this.total = response.data.total
         setTimeout(() => {
           this.listLoading = false
@@ -308,17 +311,18 @@ export default {
     },
     commonCreateData(response) {
       // 将最新sellerId赋值展示
-      this.temp.sellerId = response.data
-      this.list.unshift(this.temp)
-      this.dialogFormVisible = false
-      // 上传成功后，将空间释放，不展示文件图标
-      this.fileList = []
+      // this.temp.sellerId = response.data
+      // this.list.unshift(this.temp)
+      // this.dialogFormVisible = false
+      // // 上传成功后，将空间释放，不展示文件图标
+      // this.fileList = []
       this.$notify({
         title: 'Success',
         message: 'Created Successfully',
         type: 'success',
         duration: 2000
       })
+      this.reload()
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
@@ -359,18 +363,19 @@ export default {
       })
     },
     commonUpdateData() {
-      const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
-      // 展示框中更新对应记录
-      this.list.splice(index, 1, this.temp)
-      this.dialogFormVisible = false
+      // const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
+      // // 展示框中更新对应记录
+      // this.list.splice(index, 1, this.temp)
+      // this.dialogFormVisible = false
       // 编辑上传成功后，将空间释放，不展示文件图标
-      this.fileList = []
+      // this.fileList = []
       this.$notify({
         title: 'Success',
         message: 'Update Successfully',
         type: 'success',
         duration: 2000
       })
+      this.reload()
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj

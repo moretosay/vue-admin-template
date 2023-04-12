@@ -23,7 +23,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="商家ID" prop="id" align="center" width="80px" :class-name="getSortClass('id')">
+      <el-table-column label="商家ID" align="center" width="80px" >
         <template slot-scope="{row}">
           <span>{{ row.sellerId }}</span>
         </template>
@@ -31,6 +31,12 @@
       <el-table-column label="商家名称" width="130px" align="center" >
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Logo" prop="logoPicUrl" width="130px" align="center" >
+        <!--scope相当于一行的数据， scope.row相当于当前行的数据对象-->
+        <template slot-scope="scope">
+          <el-avatar shape="square" :size="60" :src="scope.row.logoPicUrl"></el-avatar>
         </template>
       </el-table-column>
       <el-table-column label="商家简介" width="180px" align="center">
@@ -130,7 +136,6 @@
             </el-button>
           </el-upload>
         </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -275,33 +280,44 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          let fd = new FormData()
-          fd.append('name', this.temp.name)
-          fd.append('summary', this.temp.summary)
-          fd.append('businessStartTime', this.temp.businessStartTime)
-          fd.append('businessEndTime', this.temp.businessEndTime)
-          fd.append('minAmount', this.temp.minAmount)
-          fd.append('expressFee', this.temp.expressFee)
-          fd.append('status', this.temp.status)
-          this.fileList.forEach(item => {
-            // 文件信息中raw才是真的文件
-            fd.append('logoPicFile', item.raw)
-          })
-          addSellerInfoContainPic(fd).then(response => {
-            // 将最新sellerId赋值展示
-            this.temp.sellerId = response.data
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            // 上传成功后，将空间释放，不展示文件图标
-            this.fileList = []
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
+          if (this.fileList.length === 0) {
+            // 不上传logoPic提交
+            addSellerInfo(this.temp).then(response => {
+              this.commonCreateData(response)
             })
-          })
+          } else {
+            // 上传logoPic提交
+            const fd = new FormData()
+            fd.append('name', this.temp.name)
+            fd.append('summary', this.temp.summary)
+            fd.append('businessStartTime', this.temp.businessStartTime)
+            fd.append('businessEndTime', this.temp.businessEndTime)
+            fd.append('minAmount', this.temp.minAmount)
+            fd.append('expressFee', this.temp.expressFee)
+            fd.append('status', this.temp.status)
+            this.fileList.forEach(item => {
+              // 文件信息中raw才是真的文件
+              fd.append('logoPicFile', item.raw)
+            })
+            addSellerInfoContainPic(fd).then(response => {
+              this.commonCreateData(response)
+            })
+          }
         }
+      })
+    },
+    commonCreateData(response) {
+      // 将最新sellerId赋值展示
+      this.temp.sellerId = response.data
+      this.list.unshift(this.temp)
+      this.dialogFormVisible = false
+      // 上传成功后，将空间释放，不展示文件图标
+      this.fileList = []
+      this.$notify({
+        title: 'Success',
+        message: 'Created Successfully',
+        type: 'success',
+        duration: 2000
       })
     },
     handleUpdate(row) {
@@ -316,34 +332,44 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          let fd = new FormData()
-          fd.append('sellerId', this.temp.sellerId)
-          fd.append('name', this.temp.name)
-          fd.append('summary', this.temp.summary)
-          fd.append('businessStartTime', this.temp.businessStartTime)
-          fd.append('businessEndTime', this.temp.businessEndTime)
-          fd.append('minAmount', this.temp.minAmount)
-          fd.append('expressFee', this.temp.expressFee)
-          fd.append('status', this.temp.status)
-          this.fileList.forEach(item => {
-            // 文件信息中raw才是真的文件
-            fd.append('logoPicFile', item.raw)
-          })
-          editSellerInfoContainPic(fd).then(() => {
-            const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
-            // 展示框中更新对应记录
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            // 编辑上传成功后，将空间释放，不展示文件图标
-            this.fileList = []
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
+          if (this.fileList.length === 0) {
+            // 不上传logoPic提交
+            editSellerInfo(this.temp).then(() => {
+              this.commonUpdateData()
             })
-          })
+          } else {
+            // 上传logoPic提交
+            const fd = new FormData()
+            fd.append('sellerId', this.temp.sellerId)
+            fd.append('name', this.temp.name)
+            fd.append('summary', this.temp.summary)
+            fd.append('businessStartTime', this.temp.businessStartTime)
+            fd.append('businessEndTime', this.temp.businessEndTime)
+            fd.append('minAmount', this.temp.minAmount)
+            fd.append('expressFee', this.temp.expressFee)
+            fd.append('status', this.temp.status)
+            this.fileList.forEach(item => {
+              fd.append('logoPicFile', item.raw)
+            })
+            editSellerInfoContainPic(fd).then(() => {
+              this.commonUpdateData()
+            })
+          }
         }
+      })
+    },
+    commonUpdateData() {
+      const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
+      // 展示框中更新对应记录
+      this.list.splice(index, 1, this.temp)
+      this.dialogFormVisible = false
+      // 编辑上传成功后，将空间释放，不展示文件图标
+      this.fileList = []
+      this.$notify({
+        title: 'Success',
+        message: 'Update Successfully',
+        type: 'success',
+        duration: 2000
       })
     },
     handleDelete(row, index) {

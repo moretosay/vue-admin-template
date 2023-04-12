@@ -23,49 +23,49 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="商家ID" align="center" width="80px" >
+      <el-table-column label="商家ID" align="center" width="70px" >
         <template slot-scope="{row}">
           <span>{{ row.sellerId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家名称" width="130px" align="center" >
+      <el-table-column label="商家名称" width="110px" align="center" >
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Logo" prop="logoPicUrl" width="130px" align="center" >
+      <el-table-column label="Logo" prop="logoPicUrl" width="100px" align="center" >
         <!--scope相当于一行的数据， scope.row相当于当前行的数据对象-->
         <template slot-scope="scope">
           <el-avatar shape="square" :size="60" :src="scope.row.logoPicUrl" v-if="scope.row.logoPicUrl != null" ></el-avatar>
           <span v-if="scope.row.logoPicUrl == null" > 待上传</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家简介" width="180px" align="center">
+      <el-table-column label="商家简介" width="105px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.summary }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="营业开始时间" width="130px" align="center">
+      <el-table-column label="营业开始时间" width="105px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.businessStartTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="营业结束时间" width="130px" align="center">
+      <el-table-column label="营业结束时间" width="105px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.businessEndTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="最小起送费" width="120px" align="center">
+      <el-table-column label="最小起送费" width="95px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.minAmount }}</span> 元
         </template>
       </el-table-column>
-      <el-table-column label="配送费" width="80px" align="center">
+      <el-table-column label="配送费" width="95px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.expressFee }}</span> 元
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="105px" align="center">
+      <el-table-column label="状态" class-name="status-col" width="95px" align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status }}

@@ -23,12 +23,12 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="商品ID" prop="id" align="center" width="80px" >
+      <el-table-column label="商品ID" prop="id" align="center" width="70px" >
         <template slot-scope="{row}">
           <span>{{ row.commodityId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品名称" width="130px" align="center">
+      <el-table-column label="商品名称" width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>

@@ -40,7 +40,7 @@
           <span v-if="scope.row.logoPicUrl == null" > 待上传</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家简介" width="105px" align="center">
+      <el-table-column label="商家简介" width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.summary }}</span>
         </template>

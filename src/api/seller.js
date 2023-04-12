@@ -11,9 +11,31 @@ export function addSellerInfo(data) {
   })
 }
 
+export function addSellerInfoContainPic(data) {
+  return request({
+    url: 'http://localhost:5000/seller/addSellerInfoContainPic',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    method: 'post',
+    data
+  })
+}
+
 export function editSellerInfo(data) {
   return request({
     url: 'http://localhost:5000/seller/editSellerInfo',
+    method: 'post',
+    data
+  })
+}
+
+export function editSellerInfoContainPic(data) {
+  return request({
+    url: 'http://localhost:5000/seller/editSellerInfoContainPic',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
     method: 'post',
     data
   })

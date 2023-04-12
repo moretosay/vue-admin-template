@@ -116,6 +116,21 @@
           <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;"/> 元
         </el-form-item>
 
+        <el-form-item label="# 商家logo图片" prop="logoPicUrl" label-width="120px" >
+          <el-upload
+           ref="upfile"
+           style="display: inline"
+           :auto-upload="false"
+           :on-change="handleChange"
+           :file-list="fileList"
+           :limit="1"
+           action="#">
+            <el-button type="primary" size="small">
+              上传
+            </el-button>
+          </el-upload>
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -131,23 +146,10 @@
 </template>
 
 <script>
-import { addSellerInfo, editSellerInfo, deleteSellerInfo, findSellerList } from '@/api/seller'
+import { addSellerInfo, addSellerInfoContainPic, editSellerInfo, editSellerInfoContainPic, deleteSellerInfo, findSellerList } from '@/api/seller'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-
-// const calendarTypeOptions = [
-//   { key: 'CN', display_name: 'China' },
-//   { key: 'US', display_name: 'USA' },
-//   { key: 'JP', display_name: 'Japan' },
-//   { key: 'EU', display_name: 'Eurozone' }
-// ]
-//
-// // arr to obj, such as { CN : "China", US : "USA" }
-// const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-//   acc[cur.key] = cur.display_name
-//   return acc
-// }, {})
 
 export default {
   name: 'Seller',
@@ -162,10 +164,6 @@ export default {
       }
       return statusMap[status]
     }
-    // ,
-    // typeFilter(type) {
-    //   return calendarTypeKeyValue[type]
-    // }
   },
   data() {
     return {
@@ -193,8 +191,9 @@ export default {
         timestamp: new Date(),
         title: '',
         type: '',
-        status: 'published'
+        status: 'draft'
       },
+      fileList: [],
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -257,7 +256,7 @@ export default {
         remark: '',
         timestamp: new Date(),
         title: '',
-        status: 'published',
+        status: 'draft',
         type: ''
       }
     },
@@ -269,14 +268,32 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    // 通过onchanne触发方法获得文件列表
+    handleChange(file, fileList) {
+      this.fileList = fileList
+    },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          addSellerInfo(this.temp).then(response => {
+          let fd = new FormData()
+          fd.append('name', this.temp.name)
+          fd.append('summary', this.temp.summary)
+          fd.append('businessStartTime', this.temp.businessStartTime)
+          fd.append('businessEndTime', this.temp.businessEndTime)
+          fd.append('minAmount', this.temp.minAmount)
+          fd.append('expressFee', this.temp.expressFee)
+          fd.append('status', this.temp.status)
+          this.fileList.forEach(item => {
+            // 文件信息中raw才是真的文件
+            fd.append('logoPicFile', item.raw)
+          })
+          addSellerInfoContainPic(fd).then(response => {
             // 将最新sellerId赋值展示
             this.temp.sellerId = response.data
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
+            // 上传成功后，将空间释放，不展示文件图标
+            this.fileList = []
             this.$notify({
               title: 'Success',
               message: 'Created Successfully',
@@ -299,12 +316,26 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          editSellerInfo(tempData).then(() => {
+          let fd = new FormData()
+          fd.append('sellerId', this.temp.sellerId)
+          fd.append('name', this.temp.name)
+          fd.append('summary', this.temp.summary)
+          fd.append('businessStartTime', this.temp.businessStartTime)
+          fd.append('businessEndTime', this.temp.businessEndTime)
+          fd.append('minAmount', this.temp.minAmount)
+          fd.append('expressFee', this.temp.expressFee)
+          fd.append('status', this.temp.status)
+          this.fileList.forEach(item => {
+            // 文件信息中raw才是真的文件
+            fd.append('logoPicFile', item.raw)
+          })
+          editSellerInfoContainPic(fd).then(() => {
             const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
             // 展示框中更新对应记录
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
+            // 编辑上传成功后，将空间释放，不展示文件图标
+            this.fileList = []
             this.$notify({
               title: 'Success',
               message: 'Update Successfully',

@@ -158,9 +158,9 @@ export default {
     statusFilter(status) {
       const statusMap = {
         TO_PAY: 'danger',
-        TO_RECEIVE: 'info',
+        TO_RECEIVE: 'success',
         TO_ARRIVE: 'success',
-        FINISHED: 'success'
+        FINISHED: 'info'
       }
       return statusMap[status]
     }

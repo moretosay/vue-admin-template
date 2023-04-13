@@ -146,7 +146,6 @@
 import { editOrderInfo, deleteOrderInfo, findOrderList } from '@/api/seller/order'
 
 import waves from '@/directive/waves' // waves directive
-// import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
@@ -174,19 +173,13 @@ export default {
       listQuery: {
         page: 1,
         limit: 10,
-        importance: undefined,
         title: undefined,
-        type: undefined,
-        sort: '+id'
+        type: undefined
       },
-      // calendarTypeOptions,
-      // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       categoryList: [],
       temp: {
         id: undefined,
-        importance: 1,
         remark: '',
         timestamp: new Date(),
         title: '',
@@ -247,18 +240,9 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
         remark: '',
         timestamp: new Date(),
         title: '',
@@ -269,12 +253,8 @@ export default {
     },
     handleDetail(row) {
       this.temp = Object.assign({}, row) // copy obj
-      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'detail'
       this.dialogFormVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs['dataForm'].clearValidate()
-      // })
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj
@@ -288,7 +268,6 @@ export default {
         })
         // // 展示框中删除对应记录
         this.list.splice(index, 1)
-        // this.reload()
       })
     },
     handleModifyStatus(row, status) {
@@ -312,32 +291,6 @@ export default {
       })
     }
     // handleDownload() {
-    //   this.downloadLoading = true
-    //   import('@/vendor/Export2Excel').then(excel => {
-    //     const tHeader = ['商家ID', '商家名称', '商家简介', '营业开始时间', '营业结束时间', '最小起送金额', '配送费', 'status']
-    //     const filterVal = ['sellerId', 'name', 'summary', 'businessStartTime', 'businessEndTime', 'minAmount', 'expressFee', 'status']
-    //     const data = this.formatJson(filterVal)
-    //     excel.export_json_to_excel({
-    //       header: tHeader,
-    //       data,
-    //       filename: 'table-list'
-    //     })
-    //     this.downloadLoading = false
-    //   })
-    // },
-    // formatJson(filterVal) {
-    //   return this.list.map(v => filterVal.map(j => {
-    //     if (j === 'timestamp') {
-    //       return parseTime(v[j])
-    //     } else {
-    //       return v[j]
-    //     }
-    //   }))
-    // },
-    // getSortClass: function(key) {
-    //   // const sort = this.listQuery.sort
-    //   // return sort === `+${key}` ? 'ascending' : 'descending'
-    // }
   }
 }
 </script>

@@ -93,8 +93,8 @@
 </template>
 
 <script>
-import { addCategoryList, editCategoryInfo, deleteCategoryInfo, findCategoryList } from '@/api/seller-category'
-import { findSellerList, editSellerInfo } from '@/api/seller'
+import { addCategoryList, editCategoryInfo, deleteCategoryInfo, findCategoryList } from '@/api/seller/category'
+import { findSellerList, editSellerInfo } from '@/api/seller/seller'
 
 import waves from '@/directive/waves' // waves directive
 // import { parseTime } from '@/utils'

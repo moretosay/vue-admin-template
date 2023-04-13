@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import { addSellerInfo, addSellerInfoContainPic, editSellerInfo, editSellerInfoContainPic, deleteSellerInfo, findSellerList } from '@/api/seller'
+import { addSellerInfo, addSellerInfoContainPic, editSellerInfo, editSellerInfoContainPic, deleteSellerInfo, findSellerList } from '@/api/seller/seller'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination

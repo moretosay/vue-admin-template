@@ -45,9 +45,9 @@
           <span>{{ row.summary }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品价格" width="130px" align="center">
+      <el-table-column label="商品价格" width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.price }}</span>
+          <span>{{ row.price }}</span> 元
         </template>
       </el-table-column>
       <el-table-column label="关联类目" width="330px" align="left" header-align="center">
@@ -55,7 +55,7 @@
           <span>{{ row.categoryName }} 【类目ID:{{ row.categoryId }}, 所属商家: {{ row.sellerName }}】</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="170px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
@@ -83,7 +83,7 @@
         </el-form-item>
 
         <el-form-item label="商品价格" prop="price" label-width="120px" >
-          <el-input v-model="temp.price" placeholder="请输入商品价格" style="width: 200px;" />
+          <el-input v-model="temp.price" placeholder="请输入商品价格" style="width: 200px;" /> 元
         </el-form-item>
 
         <el-form-item label="关联类目" prop="checkBoxCategoryIdList" label-width="120px" v-if="dialogStatus==='create'" >

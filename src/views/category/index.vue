@@ -38,17 +38,11 @@
           <span>{{ row.sellerName }} 【商家ID:{{ row.sellerId }}】</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="170px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <!--<el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">-->
-            <!--发布-->
-          <!--</el-button>-->
-          <!--<el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">-->
-            <!--下线-->
-          <!--</el-button>-->
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
           </el-button>

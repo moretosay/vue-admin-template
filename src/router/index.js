@@ -62,7 +62,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'detail',
-        component: () => import('@/views/seller/index'),
+        component: () => import('@/views/seller/seller'),
         name: 'Detail',
         meta: { title: '商家管理', icon: 'form' }
       }
@@ -75,7 +75,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'detail',
-        component: () => import('@/views/category/index'),
+        component: () => import('@/views/seller/category'),
         name: 'Detail',
         meta: { title: '类目管理', icon: 'form' }
       }
@@ -88,7 +88,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'detail',
-        component: () => import('@/views/commodity/index'),
+        component: () => import('@/views/seller/commodity'),
         name: 'Detail',
         meta: { title: '商品管理', icon: 'form' }
       }

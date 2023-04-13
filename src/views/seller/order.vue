@@ -2,9 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
 
-      <el-form-item label="商品名称" label-width="120px" >
-      </el-form-item>
-      <el-input v-model="listQuery.status" placeholder="订单状态" style="width: 100px; height: 50px"
+      <el-input v-model="listQuery.status" placeholder="状态关键字" style="width: 100px; height: 50px"
                 class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.remark" placeholder="备注关键字" style="width: 120px; height: 50px"
                 class="filter-item" @keyup.enter.native="handleFilter" />
@@ -28,12 +26,27 @@
           <span>{{ row.orderId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="卖家名称" width="110px" align="center">
+      <el-table-column label="客户" width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.sellerName }}</span>
+          <span>{{ row.name}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="总金额" width="80px" align="center">
+      <el-table-column label="性别" width="60px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.gender == '0' ? '女' : '男'}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="手机号" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.mobile}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="配送地址" width="250px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.area + row.detail }}</span> 元
+        </template>
+      </el-table-column>
+      <el-table-column label="订单金额" width="80px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.total }}</span> 元
         </template>
@@ -48,13 +61,34 @@
           <span>{{ row.remark }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="170px" class-name="small-padding fixed-width">
+      <el-table-column label="商家名称" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.sellerName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" class-name="status-col" width="110px" align="center">
+        <template slot-scope="{row}">
+          <el-tag :type="row.status | statusFilter">
+            <span v-if="row.status == 'TO_PAY'">已点单待支付</span>
+            <span v-if="row.status == 'TO_RECEIVE'">已支付待接单</span>
+            <span v-if="row.status == 'TO_ARRIVE'">已接单待配送</span>
+            <span v-if="row.status == 'FINISHED'">已完成</span>
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" width="235px" class-name="small-padding fixed-width" align="left" header-align="center" >
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
+          <el-button type="primary" size="mini" @click="handleDetail(row)">
+            订单详情
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
+          </el-button>
+          <el-button v-if="row.status=='TO_RECEIVE'" size="mini" type="success" @click="handleModifyStatus(row,'TO_ARRIVE')">
+            接单
+          </el-button>
+          <el-button v-if="row.status=='TO_ARRIVE'" size="mini" type="success" @click="handleModifyStatus(row,'FINISHED')">
+            配送
           </el-button>
         </template>
       </el-table-column>
@@ -67,49 +101,40 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="商品名称" prop="name" label-width="120px" >
-          <el-input v-model="temp.name" placeholder="请输入商品名称" style="width: 200px;" />
+        <el-form-item label="订单ID" label-width="120px" >
+          <el-input v-model="temp.orderId" style="width: 200px;" :disabled="true" />
         </el-form-item>
 
-        <el-form-item label="# 商品简介" prop="summary" label-width="120px" >
-          <el-input v-model="temp.summary" placeholder="请输入商品简介" style="width: 200px;" />
+        <el-form-item label="商家名称" label-width="120px" >
+          <el-input v-model="temp.sellerName" style="width: 200px;" :disabled="true" />
         </el-form-item>
 
-        <el-form-item label="商品价格" prop="price" label-width="120px" >
-          <el-input v-model="temp.price" placeholder="请输入商品价格" style="width: 200px;" /> 元
+        <el-form-item label="订单金额" label-width="120px" >
+          <el-input v-model="temp.total" style="width: 200px;" :disabled="true" />
         </el-form-item>
 
-        <el-form-item label="关联类目" prop="checkBoxCategoryIdList" label-width="120px" v-if="dialogStatus==='create'" >
-          <el-checkbox-group v-model="temp.checkBoxCategoryIdList">
-            <el-checkbox :label="item.categoryId" v-for="item in categoryList" :key="item.categoryId" >
-              <span>{{ item.name }} 【类目ID:{{ item.categoryId }}, 所属商家: {{ item.sellerName }}】</span>
-            </el-checkbox>
-          </el-checkbox-group>
-          <span style="color: green" >功能Tip：可关联多条类目，生成多个商品！</span>
+        <el-form-item label="用餐人数" label-width="120px" >
+          <el-input v-model="temp.useNum" style="width: 200px;" :disabled="true" />
         </el-form-item>
 
-        <el-form-item label="关联类目" prop="radioCategoryId" label-width="120px" v-if="dialogStatus!=='create'" >
-          <el-radio-group v-model="temp.radioCategoryId">
-            <el-radio :label="item.categoryId" v-for="item in categoryList" :key="item.categoryId" >
-              <span>{{ item.name }} 【类目ID:{{ item.categoryId }}, 所属商家: {{ item.sellerName }}】</span>
-            </el-radio>
-          </el-radio-group>
+        <el-form-item label="备注" label-width="120px" >
+          <el-input v-model="temp.remark" style="width: 200px;" :disabled="true" />
         </el-form-item>
 
-        <el-form-item label="# 商品主图" prop="mainUrl" label-width="120px" >
-          <el-upload
-            ref="upfile"
-            style="display: inline"
-            :auto-upload="false"
-            :on-change="handleChange"
-            :file-list="fileList"
-            :limit="1"
-            action="#">
-            <el-button type="primary" size="small">
-              上传
-            </el-button>
-          </el-upload>
+        <el-form-item label="商品详情" label-width="120px" >
+          <el-input v-model="temp.commodityDetail" style="width: 200px;" :disabled="true" />
         </el-form-item>
+
+        <el-form-item label="状态" label-width="120px" >
+          <el-input v-if="temp.status == 'TO_PAY'" v-model="temp.status + '【已点单待支付】'"
+                    style="width: 200px;" :disabled="true" ></el-input>
+          <el-input v-if="temp.status == 'TO_RECEIVE'" v-model="temp.status + '【已支付待接单】'"
+                    style="width: 200px;" :disabled="true" ></el-input>
+          <el-input v-if="temp.status == 'TO_ARRIVE'" v-model="temp.status + '【已接单待配送】'"
+                    style="width: 200px;" :disabled="true" ></el-input>
+          <el-input v-if="temp.status == 'FINISHED'" v-model="temp.status + '【已完成】'"
+                    style="width: 200px;" :disabled="true" ></el-input>
+      </el-form-item>
 
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -142,9 +167,10 @@ export default {
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
+        TO_PAY: 'danger',
+        TO_RECEIVE: 'info',
+        TO_ARRIVE: 'success',
+        FINISHED: 'success'
       }
       return statusMap[status]
     }
@@ -174,14 +200,13 @@ export default {
         remark: '',
         timestamp: new Date(),
         title: '',
-        status: 'published'
+        status: 'draft'
       },
       fileList: [],
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: '编辑商品',
-        create: '新增商品'
+        detail: '订单详情'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -200,10 +225,24 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      var status = this.listQuery.status
+      var statusList = []
+      if('已点单待支付'.search(status) != -1){
+        statusList.push('TO_PAY')
+      }
+      if('已支付待接单'.search(status) != -1) {
+        statusList.push('TO_RECEIVE')
+      }
+      if('已接单待配送'.search(status) != -1) {
+        statusList.push('TO_ARRIVE')
+      }
+      if('已完成'.search(status) != -1) {
+        statusList.push('FINISHED')
+      }
       var requestBody = {
         pageNum: this.listQuery.page,
         pageSize: this.listQuery.limit,
-        status: this.listQuery.status,
+        statusList: statusList,
         remark: this.listQuery.remark
       }
       findOrderList(requestBody).then(response => {
@@ -239,144 +278,19 @@ export default {
         remark: '',
         timestamp: new Date(),
         title: '',
-        status: 'published',
+        status: 'draft',
         type: '',
         checkBoxCategoryIdList: []
       }
     },
-    handleCreate() {
-      // 新增商品时，查询当前用户下的类目，后续进行权限控制  todo
-      // this.categoryList = this.list
-      var requestBody = {
-        pageNum: 1,
-        pageSize: 20// 不可能超过20个商家吧！
-      }
-      findCategoryList(requestBody).then(response => {
-        this.categoryList = response.data.list
-        // this.total = response.data.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    // 通过onchanne触发方法获得文件列表
-    handleChange(file, fileList) {
-      this.fileList = fileList
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          // 不上传主图
-          if (this.fileList.length === 0) {
-            var requestBody = {
-              name: this.temp.name,
-              summary: this.temp.summary,
-              price: this.temp.price,
-              categoryIdList: this.temp.checkBoxCategoryIdList
-            }
-            addCommodityList(requestBody).then(response => {
-              this.commonCreateData(response)
-            })
-          } else {
-            // 上传主图
-            const fd = new FormData()
-            fd.append('name', this.temp.name)
-            fd.append('summary', this.temp.summary)
-            fd.append('price', this.temp.price)
-            fd.append('categoryIdList', this.temp.checkBoxCategoryIdList)
-            this.fileList.forEach(item => {
-              fd.append('mainFile', item.raw)
-            })
-            addCommodityListContainPic(fd).then(response => {
-              this.commonCreateData(response)
-            })
-          }
-        }
-      })
-    },
-    commonCreateData(response) {
-      this.$notify({
-        title: 'Success',
-        message: 'Created Successfully',
-        type: 'success',
-        duration: 2000
-      })
-      this.reload()
-    },
-    handleUpdate(row) {
-      // 编辑类目时，查询当前用户下的商家，后续进行权限控制  todo
-      // this.categoryList = this.list
-      var requestBody = {
-        pageNum: 1,
-        pageSize: 20// 不可能超过20个商家吧！
-      }
-      findCategoryList(requestBody).then(response => {
-        this.categoryList = response.data.list
-        // this.total = response.data.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-      // todo
+    handleDetail(row) {
       this.temp = Object.assign({}, row) // copy obj
-      // 此种方式赋值，radioCategoryId 对应的组件不可修改
-      // this.temp.radioCategoryId = this.temp.categoryId
-      // radioCategoryId 对应的组件可修改
-      this.$set(this.temp, 'radioCategoryId', this.temp.categoryId)
       // this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
+      this.dialogStatus = 'detail'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          if (this.fileList.length === 0) {
-            var requestBody = {
-              commodityId: this.temp.commodityId,
-              name: this.temp.name,
-              summary: this.temp.summary,
-              price: this.temp.price,
-              categoryId: this.temp.radioCategoryId
-            }
-            // 不上传主图
-            editCommodityInfo(requestBody).then(() => {
-              this.commonUpdateData()
-            })
-          } else {
-            // 上传logoPic提交
-            const fd = new FormData()
-            fd.append('commodityId', this.temp.commodityId)
-            fd.append('name', this.temp.name)
-            fd.append('summary', this.temp.summary)
-            fd.append('price', this.temp.price)
-            fd.append('categoryId', this.temp.radioCategoryId)
-            this.fileList.forEach(item => {
-              fd.append('mainFile', item.raw)
-            })
-            editCommodityInfoContainPic(fd).then(() => {
-              this.commonUpdateData()
-            })
-          }
-        }
-      })
-    },
-    commonUpdateData() {
-      this.$notify({
-        title: 'Success',
-        message: 'Update Successfully',
-        type: 'success',
-        duration: 2000
-      })
-      this.reload()
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj
@@ -391,6 +305,26 @@ export default {
         // // 展示框中删除对应记录
         this.list.splice(index, 1)
         // this.reload()
+      })
+    },
+    handleModifyStatus(row, status) {
+      this.temp = Object.assign({}, row) // copy obj
+      var requestBody = {
+        orderId: this.temp.orderId,
+        status: status
+      }
+      this.temp.status = status
+      editOrderInfo(requestBody).then(() => {
+        const index = this.list.findIndex(v => v.orderId === this.temp.orderId)
+        // 展示框中更新对应记录
+        this.list.splice(index, 1, this.temp)
+        this.dialogFormVisible = false
+        this.$notify({
+          title: 'Success',
+          message: status === 'TO_ARRIVE' ? '已接单待配送' : status === 'FINISHED' ? '已完成' : '非预期操作',
+          type: 'success',
+          duration: 2000
+        })
       })
     }
     // handleDownload() {

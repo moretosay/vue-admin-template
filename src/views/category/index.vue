@@ -73,6 +73,7 @@
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
+          <span style="color: green" >功能Tip：可关联多个商家，生成多条类目！</span>
         </el-form-item>
 
         <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'" >
@@ -81,10 +82,6 @@
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-radio>
           </el-radio-group>
-        </el-form-item>
-
-        <el-form-item label="* 功能Tip：" label-width="120px" v-if="dialogStatus==='create'" >
-          <span style="color: red" >新增类目时可关联多个商家，生成多条类目！</span>
         </el-form-item>
 
       </el-form>

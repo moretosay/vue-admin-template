@@ -232,7 +232,6 @@ export default {
       }
       findSellerList(requestBody).then(response => {
         this.list = response.data.list
-        console.log('111' + JSON.stringify(this.list))
         this.total = response.data.total
         setTimeout(() => {
           this.listLoading = false

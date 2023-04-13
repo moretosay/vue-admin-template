@@ -33,6 +33,13 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="主图" prop="mainUrl" width="100px" align="center" >
+        <!--scope相当于一行的数据， scope.row相当于当前行的数据对象-->
+        <template slot-scope="scope">
+          <el-avatar shape="square" :size="60" :src="scope.row.mainUrl" v-if="scope.row.mainUrl != null" ></el-avatar>
+          <span v-if="scope.row.mainUrl == null" > 待上传</span>
+        </template>
+      </el-table-column>
       <el-table-column label="商品简介" width="130px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.summary }}</span>
@@ -85,6 +92,7 @@
               <span>{{ item.name }} 【类目ID:{{ item.categoryId }}, 所属商家: {{ item.sellerName }}】</span>
             </el-checkbox>
           </el-checkbox-group>
+          <span style="color: green" >功能Tip：可关联多条类目，生成多个商品！</span>
         </el-form-item>
 
         <el-form-item label="关联类目" prop="radioCategoryId" label-width="120px" v-if="dialogStatus!=='create'" >
@@ -95,8 +103,19 @@
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="* 功能Tip：" label-width="120px" v-if="dialogStatus==='create'" >
-          <span style="color: red" >新增商品时可关联多条类目，生成多个商品！</span>
+        <el-form-item label="# 商品主图" prop="mainUrl" label-width="120px" >
+          <el-upload
+            ref="upfile"
+            style="display: inline"
+            :auto-upload="false"
+            :on-change="handleChange"
+            :file-list="fileList"
+            :limit="1"
+            action="#">
+            <el-button type="primary" size="small">
+              上传
+            </el-button>
+          </el-upload>
         </el-form-item>
 
       </el-form>
@@ -114,7 +133,7 @@
 </template>
 
 <script>
-import { addCommodityList, editCommodityInfo, deleteCommodityInfo, findCommodityList } from '@/api/seller-commodity'
+import { addCommodityList, addCommodityListContainPic, editCommodityInfo, editCommodityInfoContainPic, deleteCommodityInfo, findCommodityList } from '@/api/seller-commodity'
 import { findCategoryList } from '@/api/seller-category'
 
 import waves from '@/directive/waves' // waves directive
@@ -163,6 +182,7 @@ export default {
         title: '',
         status: 'published'
       },
+      fileList: [],
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
@@ -250,30 +270,49 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
+    // 通过onchanne触发方法获得文件列表
+    handleChange(file, fileList) {
+      this.fileList = fileList
+    },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          var requestBody = {
-            name: this.temp.name,
-            summary: this.temp.summary,
-            price: this.temp.price,
-            categoryIdList: this.temp.checkBoxCategoryIdList
-          }
-          addCommodityList(requestBody).then(response => {
-            // 批量新增不将多条类目新增到原表中，还是考虑刷新页面
-            // this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
+          // 不上传主图
+          if (this.fileList.length === 0) {
+            var requestBody = {
+              name: this.temp.name,
+              summary: this.temp.summary,
+              price: this.temp.price,
+              categoryIdList: this.temp.checkBoxCategoryIdList
+            }
+            addCommodityList(requestBody).then(response => {
+              this.commonCreateData(response)
             })
-            // 通过子组件inject和调用this.reload，APP组件定义this.reload，和router-view的isRouterAlive等来控制
-            this.reload()
-          })
+          } else {
+            // 上传主图
+            const fd = new FormData()
+            fd.append('name', this.temp.name)
+            fd.append('summary', this.temp.summary)
+            fd.append('price', this.temp.price)
+            fd.append('categoryIdList', this.temp.checkBoxCategoryIdList)
+            this.fileList.forEach(item => {
+              fd.append('mainFile', item.raw)
+            })
+            addCommodityListContainPic(fd).then(response => {
+              this.commonCreateData(response)
+            })
+          }
         }
       })
+    },
+    commonCreateData(response) {
+      this.$notify({
+        title: 'Success',
+        message: 'Created Successfully',
+        type: 'success',
+        duration: 2000
+      })
+      this.reload()
     },
     handleUpdate(row) {
       // 编辑类目时，查询当前用户下的商家，后续进行权限控制  todo
@@ -305,28 +344,44 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          var requestBody = {
-            commodityId: this.temp.commodityId,
-            name: this.temp.name,
-            summary: this.temp.summary,
-            price: this.temp.price,
-            categoryId: this.temp.radioCategoryId
-          }
-          editCommodityInfo(requestBody).then(() => {
-            // const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
-            // // 展示框中更新对应记录
-            // this.list.splice(index, 1, this.temp)
-            // this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
+          if (this.fileList.length === 0) {
+            var requestBody = {
+              commodityId: this.temp.commodityId,
+              name: this.temp.name,
+              summary: this.temp.summary,
+              price: this.temp.price,
+              categoryId: this.temp.radioCategoryId
+            }
+            // 不上传主图
+            editCommodityInfo(requestBody).then(() => {
+              this.commonUpdateData()
             })
-            this.reload()
-          })
+          } else {
+            // 上传logoPic提交
+            const fd = new FormData()
+            fd.append('commodityId', this.temp.commodityId)
+            fd.append('name', this.temp.name)
+            fd.append('summary', this.temp.summary)
+            fd.append('price', this.temp.price)
+            fd.append('categoryId', this.temp.radioCategoryId)
+            this.fileList.forEach(item => {
+              fd.append('mainFile', item.raw)
+            })
+            editCommodityInfoContainPic(fd).then(() => {
+              this.commonUpdateData()
+            })
+          }
         }
       })
+    },
+    commonUpdateData() {
+      this.$notify({
+        title: 'Success',
+        message: 'Update Successfully',
+        type: 'success',
+        duration: 2000
+      })
+      this.reload()
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj

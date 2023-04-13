@@ -8,9 +8,31 @@ export function addCommodityList(data) {
   })
 }
 
+export function addCommodityListContainPic(data) {
+  return request({
+    url: 'http://localhost:5000/seller/commodity/addCommodityListContainPic',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    method: 'post',
+    data
+  })
+}
+
 export function editCommodityInfo(data) {
   return request({
     url: 'http://localhost:5000/seller/commodity/editCommodityInfo',
+    method: 'post',
+    data
+  })
+}
+
+export function editCommodityInfoContainPic(data) {
+  return request({
+    url: 'http://localhost:5000/seller/commodity/editCommodityInfoContainPic',
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
     method: 'post',
     data
   })

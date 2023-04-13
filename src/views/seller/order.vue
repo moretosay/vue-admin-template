@@ -142,7 +142,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 
 export default {
   inject: ['reload'],
-  name: 'Commodity',
+  name: 'Order',
   components: { Pagination },
   directives: { waves },
   filters: {

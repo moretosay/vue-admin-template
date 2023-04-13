@@ -23,8 +23,6 @@ service.interceptors.request.use(
       // please modify it according to the actual situation
       config.headers['X-Token'] = getToken()
     }
-    console.log('request config:' + JSON.stringify(config.headers))
-    // console.log('request:' + JSON.stringify(request.data))
     return config
   },
   error => {

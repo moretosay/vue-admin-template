@@ -380,8 +380,8 @@ export default {
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj
-      var requestParam = { commodityId: this.temp.commodityId }
-      deleteCommodityInfo(requestParam).then(() => {
+      var requestParam = { orderId: this.temp.orderId }
+      deleteOrderInfo(requestParam).then(() => {
         this.$notify({
           title: 'Success',
           message: 'Delete Successfully',

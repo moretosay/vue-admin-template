@@ -1,7 +1,13 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.name" placeholder="商品名称关键字检索" style="width: 220px; height: 50px" class="filter-item" @keyup.enter.native="handleFilter" />
+
+      <el-form-item label="商品名称" label-width="120px" >
+      </el-form-item>
+      <el-input v-model="listQuery.status" placeholder="订单状态" style="width: 100px; height: 50px"
+                class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.remark" placeholder="备注关键字" style="width: 120px; height: 50px"
+                class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -19,34 +25,27 @@
     >
       <el-table-column label="订单ID" prop="id" align="center" width="70px" >
         <template slot-scope="{row}">
-          <span>{{ row.commodityId }}</span>
+          <span>{{ row.orderId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商品名称" width="110px" align="center">
+      <el-table-column label="卖家名称" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span>{{ row.sellerName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="主图" prop="mainUrl" width="100px" align="center" >
-        <!--scope相当于一行的数据， scope.row相当于当前行的数据对象-->
-        <template slot-scope="scope">
-          <el-avatar shape="square" :size="60" :src="scope.row.mainUrl" v-if="scope.row.mainUrl != null" ></el-avatar>
-          <span v-if="scope.row.mainUrl == null" > 待上传</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="商品简介" width="130px" align="center">
+      <el-table-column label="总金额" width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.summary }}</span>
+          <span>{{ row.total }}</span> 元
         </template>
       </el-table-column>
-      <el-table-column label="商品价格" width="80px" align="center">
+      <el-table-column label="用餐人数" width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.price }}</span> 元
+          <span>{{ row.useNum }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联类目" width="330px" align="left" header-align="center">
+      <el-table-column label="备注" width="200px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.categoryName }} 【类目ID:{{ row.categoryId }}, 所属商家: {{ row.sellerName }}】</span>
+          <span>{{ row.remark }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="170px" class-name="small-padding fixed-width">
@@ -129,6 +128,7 @@
 <script>
 import { addCommodityList, addCommodityListContainPic, editCommodityInfo, editCommodityInfoContainPic, deleteCommodityInfo, findCommodityList } from '@/api/seller/commodity'
 import { findCategoryList } from '@/api/seller/category'
+import { editOrderInfo, deleteOrderInfo, findOrderList } from '@/api/seller/order'
 
 import waves from '@/directive/waves' // waves directive
 // import { parseTime } from '@/utils'
@@ -203,9 +203,10 @@ export default {
       var requestBody = {
         pageNum: this.listQuery.page,
         pageSize: this.listQuery.limit,
-        name: this.listQuery.name
+        status: this.listQuery.status,
+        remark: this.listQuery.remark
       }
-      findCommodityList(requestBody).then(response => {
+      findOrderList(requestBody).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         setTimeout(() => {

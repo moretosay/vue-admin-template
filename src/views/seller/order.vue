@@ -2,10 +2,18 @@
   <div class="app-container">
     <div class="filter-container">
 
-      <el-input v-model="listQuery.status" placeholder="状态关键字" style="width: 100px; height: 50px"
-                class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.remark" placeholder="备注关键字" style="width: 120px; height: 50px"
-                class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input
+        v-model="listQuery.status"
+        placeholder="状态关键字"
+        style="width: 100px; height: 50px"
+        class="filter-item"
+        @keyup.enter.native="handleFilter" />
+      <el-input
+        v-model="listQuery.remark"
+        placeholder="备注关键字"
+        style="width: 120px; height: 50px"
+        class="filter-item"
+        @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -19,7 +27,6 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
     >
       <el-table-column label="订单ID" prop="id" align="center" width="70px" >
         <template slot-scope="{row}">
@@ -79,7 +86,7 @@
       <el-table-column label="操作" width="235px" class-name="small-padding fixed-width" align="left" header-align="center" >
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleDetail(row)">
-            订单详情
+            商品详情
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
@@ -99,60 +106,43 @@
 
     <!-- :visible.sync，vue标签，设置动态的显示内容与否 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="订单ID" label-width="120px" >
-          <el-input v-model="temp.orderId" style="width: 200px;" :disabled="true" />
-        </el-form-item>
-
-        <el-form-item label="商家名称" label-width="120px" >
-          <el-input v-model="temp.sellerName" style="width: 200px;" :disabled="true" />
-        </el-form-item>
-
-        <el-form-item label="订单金额" label-width="120px" >
-          <el-input v-model="temp.total" style="width: 200px;" :disabled="true" />
-        </el-form-item>
-
-        <el-form-item label="用餐人数" label-width="120px" >
-          <el-input v-model="temp.useNum" style="width: 200px;" :disabled="true" />
-        </el-form-item>
-
-        <el-form-item label="备注" label-width="120px" >
-          <el-input v-model="temp.remark" style="width: 200px;" :disabled="true" />
-        </el-form-item>
-
-        <el-form-item label="商品详情" label-width="120px" >
-          <el-input v-model="temp.commodityDetail" style="width: 200px;" :disabled="true" />
-        </el-form-item>
-
-        <el-form-item label="状态" label-width="120px" >
-          <el-input v-if="temp.status == 'TO_PAY'" v-model="temp.status + '【已点单待支付】'"
-                    style="width: 200px;" :disabled="true" ></el-input>
-          <el-input v-if="temp.status == 'TO_RECEIVE'" v-model="temp.status + '【已支付待接单】'"
-                    style="width: 200px;" :disabled="true" ></el-input>
-          <el-input v-if="temp.status == 'TO_ARRIVE'" v-model="temp.status + '【已接单待配送】'"
-                    style="width: 200px;" :disabled="true" ></el-input>
-          <el-input v-if="temp.status == 'FINISHED'" v-model="temp.status + '【已完成】'"
-                    style="width: 200px;" :disabled="true" ></el-input>
-      </el-form-item>
-
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确认
-        </el-button>
-      </div>
+      <el-table
+        :key="tableKey"
+        v-loading="listLoading"
+        :data="temp.commodityDetailList"
+        border
+        fit
+        highlight-current-row
+        style="width: 400px;"
+      >
+        <el-table-column label="商品ID" align="center" width="70px" >
+          <template slot-scope="{row}">
+            <span>{{ row.commodityId }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="商品名称" align="center" width="110px" >
+        <template slot-scope="{row}">
+          <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
+        <el-table-column label="商品价格" align="center" width="110px" >
+          <template slot-scope="{row}">
+            <span>{{ row.price }} 元</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="商品数量" align="center" width="110px" >
+          <template slot-scope="{row}">
+            <span>x {{ row.quantity }}</span>
+          </template>
+        </el-table-column>
+      </el-table>
     </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { addCommodityList, addCommodityListContainPic, editCommodityInfo, editCommodityInfoContainPic, deleteCommodityInfo, findCommodityList } from '@/api/seller/commodity'
-import { findCategoryList } from '@/api/seller/category'
 import { editOrderInfo, deleteOrderInfo, findOrderList } from '@/api/seller/order'
 
 import waves from '@/directive/waves' // waves directive
@@ -206,7 +196,7 @@ export default {
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        detail: '订单详情'
+        detail: '商品详情'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -227,16 +217,16 @@ export default {
       this.listLoading = true
       var status = this.listQuery.status
       var statusList = []
-      if('已点单待支付'.search(status) != -1){
+      if ('已点单待支付'.search(status) !== -1) {
         statusList.push('TO_PAY')
       }
-      if('已支付待接单'.search(status) != -1) {
+      if ('已支付待接单'.search(status) !== -1) {
         statusList.push('TO_RECEIVE')
       }
-      if('已接单待配送'.search(status) != -1) {
+      if ('已接单待配送'.search(status) !== -1) {
         statusList.push('TO_ARRIVE')
       }
-      if('已完成'.search(status) != -1) {
+      if ('已完成'.search(status) !== -1) {
         statusList.push('FINISHED')
       }
       var requestBody = {
@@ -256,12 +246,6 @@ export default {
     handleFilter() {
       this.listQuery.page = 1
       this.getList()
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
     },
     sortByID(order) {
       if (order === 'ascending') {
@@ -288,9 +272,9 @@ export default {
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'detail'
       this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
+      // this.$nextTick(() => {
+      //   this.$refs['dataForm'].clearValidate()
+      // })
     },
     handleDelete(row, index) {
       this.temp = Object.assign({}, row) // copy obj

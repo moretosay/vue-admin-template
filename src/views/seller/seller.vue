@@ -20,7 +20,7 @@
       border
       fit
       highlight-current-row
-      style="width: 100%;"
+      style="width: 1155px;"
       @sort-change="sortChange"
     >
       <el-table-column label="商家ID" align="center" width="70px" >

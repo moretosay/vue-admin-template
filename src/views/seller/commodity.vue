@@ -20,7 +20,7 @@
       border
       fit
       highlight-current-row
-      style="width: 100%;"
+      style="width: 990px;"
       @sort-change="sortChange"
     >
       <el-table-column label="商品ID" prop="id" align="center" width="70px" >

@@ -17,6 +17,12 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
+      <!--<el-table-column label="商品ID" align="center" width="70px" >-->
+      <el-input
+        v-model="listQuery.message"
+        style="width: 450px; height: 50px; color: green;"
+        :disabled="true" />
+      <!--</el-table-column>-->
     </div>
 
     <el-table
@@ -143,10 +149,11 @@
 </template>
 
 <script>
-import { editOrderInfo, deleteOrderInfo, findOrderList } from '@/api/seller/order'
+import { editOrderInfo, deleteOrderInfo, findOrderList, closeSse } from '@/api/seller/order'
 
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { EventSourcePolyfill } from 'event-source-polyfill' // npm install --save event-source-polyfill
 
 export default {
   inject: ['reload'],
@@ -174,7 +181,8 @@ export default {
         page: 1,
         limit: 10,
         title: undefined,
-        type: undefined
+        type: undefined,
+        message: '消息通知面板：'
       },
       showReviewer: false,
       categoryList: [],
@@ -199,11 +207,19 @@ export default {
         checkBoxCategoryIdList: [{ required: true, message: '类目必选', trigger: 'change' }],
         radioCategoryId: [{ required: true, message: '类目必选', trigger: 'change' }]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      // 创建sse
+      eventSource: null,
+      // 模拟登录用户
+      userId: new Date().getTime()
     }
   },
+  // created:在模板渲染成html前调用， mounted:在模板渲染成html后调用
   created() {
     this.getList()
+  },
+  mounted() {
+    this.createSse()
   },
   methods: {
     getList() {
@@ -235,6 +251,62 @@ export default {
           this.listLoading = false
         }, 1.5 * 1000)
       })
+    },
+    createSse() {
+      if (window.EventSource) {
+        // 根据环境的不同，变更url
+        // const url = process.env.VUE_APP_MSG_SERVER_URL
+        // 用户userId
+        // const { userId } = this.$store.state.user
+        const url = 'http://localhost:5000/sse/connect/' + this.userId
+        this.eventSource = new EventSourcePolyfill(url)
+        // , {
+        // 设置重连时间
+        // heartbeatTimeout: 60 * 60 * 1000
+        // 添加token
+        // headers: {
+        //   'Authorization': 'test token'
+        // }
+        // })
+        this.eventSource.onopen = (e) => {
+          console.log('已建立SSE连接~')
+        }
+        this.eventSource.onmessage = (e) => {
+          console.log('已接受到消息:', e.data)
+          // 接收到新的订单，调用搜索方法，不能直接调用this.reload，因为这个机制会触发页面的关闭和打开，会创建大量sse连接
+          this.listQuery.message = '消息通知面板： ' + e.data
+          this.getList()
+        }
+        this.eventSource.onerror = (e) => {
+          if (e.readyState === EventSource.CLOSED) {
+            console.log('SSE连接关闭')
+          } else if (this.eventSource.readyState === EventSource.CONNECTING) {
+            // 报错1： Error: No activity within 45000 milliseconds. No response received. Reconnecting.
+            // 因为netty框架内置的超时时间是45秒
+            console.log('SSE正在重连')
+            // 重新设置token
+            // this.eventSource.headers = {
+            //   'Authorization': 'test token'
+            // };
+          } else {
+            console.log('error', e)
+          }
+        }
+      } else {
+        console.log('你的浏览器不支持SSE~')
+      }
+    },
+    beforeDestroy() {
+      if (this.eventSource) {
+        // const { userId } = this.$store.state.user
+        // 前端关闭Sse
+        this.eventSource.close()
+        // 通知后端关闭Sse
+        closeSse(this.userId).then(() => {
+          console.log('退出登录或关闭浏览器，关闭SSE连接~')
+          this.eventSource = null
+        })
+      }
     },
     handleFilter() {
       this.listQuery.page = 1

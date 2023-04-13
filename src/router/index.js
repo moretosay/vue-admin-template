@@ -63,7 +63,7 @@ export const constantRoutes = [
       {
         path: 'detail',
         component: () => import('@/views/seller/seller'),
-        name: 'Detail',
+        name: 'SellerDetail',
         meta: { title: '商家管理', icon: 'form' }
       }
     ]
@@ -76,7 +76,7 @@ export const constantRoutes = [
       {
         path: 'detail',
         component: () => import('@/views/seller/category'),
-        name: 'Detail',
+        name: 'CategoryDetail',
         meta: { title: '类目管理', icon: 'form' }
       }
     ]
@@ -89,7 +89,7 @@ export const constantRoutes = [
       {
         path: 'detail',
         component: () => import('@/views/seller/commodity'),
-        name: 'Detail',
+        name: 'CommodityDetail',
         meta: { title: '商品管理', icon: 'form' }
       }
     ]
@@ -102,7 +102,7 @@ export const constantRoutes = [
       {
         path: 'detail',
         component: () => import('@/views/seller/order'),
-        name: 'Detail',
+        name: 'OrderDetail',
         meta: { title: '订单管理', icon: 'table' }
       }
     ]

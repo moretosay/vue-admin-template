@@ -11,17 +11,14 @@
       <el-input
         v-model="listQuery.remark"
         placeholder="备注关键字"
-        style="width: 120px; height: 50px"
+        style="width: 100px; height: 50px"
         class="filter-item"
         @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
       <!--<el-table-column label="商品ID" align="center" width="70px" >-->
-      <el-input
-        v-model="listQuery.message"
-        style="width: 450px; height: 50px; color: green;"
-        :disabled="true" />
+      <span style="color: green">{{ listQuery.message }}</span>
       <!--</el-table-column>-->
     </div>
 
@@ -182,7 +179,7 @@ export default {
         limit: 10,
         title: undefined,
         type: undefined,
-        message: '消息通知面板：'
+        message: ''
       },
       showReviewer: false,
       categoryList: [],
@@ -280,7 +277,7 @@ export default {
         this.eventSource.onmessage = (e) => {
           console.log(this.getCurrentTime() + '步骤2：已接受到push消息:', e.data)
           // 接收到新的订单，调用搜索方法，不能直接调用this.reload，因为这个机制会触发页面的关闭和打开，会创建大量sse连接
-          this.listQuery.message = '消息通知栏： ' + e.data
+          this.listQuery.message = e.data
           this.getList()
         }
         this.eventSource.onerror = (e) => {

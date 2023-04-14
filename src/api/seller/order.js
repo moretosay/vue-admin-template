@@ -27,8 +27,8 @@ export function findOrderList(data) {
 export function closeSse(data) {
   return request({
     url: 'http://localhost:5000/sse/close',
-    method: 'get',
-    data
+    method: 'post',
+    params: data
   })
 }
 

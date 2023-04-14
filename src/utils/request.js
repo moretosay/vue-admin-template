@@ -48,8 +48,10 @@ service.interceptors.response.use(
     const res = response.data
     const msg = response.data.msg
 
+    // console.log('request.js~reponse:' + JSON.stringify(response))
     // if the custom code is not '000', it is judged as an error.
     if (res.code !== '000') {
+
       Message({
         message: msg || 'Error',
         type: 'error',

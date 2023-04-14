@@ -210,13 +210,17 @@ export default {
       downloadLoading: false,
       // 创建sse
       eventSource: null,
-      // 模拟登录用户
+      // 模拟登录用户 1681443270209
       userId: new Date().getTime()
     }
   },
   // created:在模板渲染成html前调用， mounted:在模板渲染成html后调用
   created() {
     this.getList()
+    // 页面加载时只执行 onload 事件。
+    // 页面关闭时，先 onbeforeunload 事件，再 onunload 事件。
+    // 页面刷新时先执行 onbeforeunload事件，然后 onunload 事件，最后 onload 事件。
+    // window.addEventListener('beforeunload事件', this.closeSse())
   },
   mounted() {
     this.createSse()
@@ -259,6 +263,7 @@ export default {
         // 用户userId
         // const { userId } = this.$store.state.user
         const url = 'http://localhost:5000/sse/connect/' + this.userId
+        // this.eventSource = new EventSourcePolyfill(url)
         this.eventSource = new EventSourcePolyfill(url)
         // , {
         // 设置重连时间
@@ -269,45 +274,69 @@ export default {
         // }
         // })
         this.eventSource.onopen = (e) => {
-          console.log('已建立SSE连接~')
+          console.log(this.getCurrentTime() + '步骤1：建立SSE连接~userId:' + this.userId)
+          // console.log('步骤1：已建立SSE连接~:' + JSON.stringify(e))
         }
         this.eventSource.onmessage = (e) => {
-          console.log('已接受到消息:', e.data)
+          console.log(this.getCurrentTime() + '步骤2：已接受到push消息:', e.data)
           // 接收到新的订单，调用搜索方法，不能直接调用this.reload，因为这个机制会触发页面的关闭和打开，会创建大量sse连接
-          this.listQuery.message = '消息通知面板： ' + e.data
+          this.listQuery.message = '消息通知栏： ' + e.data
           this.getList()
         }
         this.eventSource.onerror = (e) => {
-          if (e.readyState === EventSource.CLOSED) {
-            console.log('SSE连接关闭')
-          } else if (this.eventSource.readyState === EventSource.CONNECTING) {
-            // 报错1： Error: No activity within 45000 milliseconds. No response received. Reconnecting.
-            // 因为netty框架内置的超时时间是45秒
-            console.log('SSE正在重连')
-            // 重新设置token
-            // this.eventSource.headers = {
-            //   'Authorization': 'test token'
-            // };
-          } else {
-            console.log('error', e)
-          }
+          console.log(this.getCurrentTime() + '步骤4：SSE连接失败~userId:' + this.userId)
+          // if (e.readyState === EventSource.CLOSED) {
+          //   console.log('SSE连接关闭~userId:' + this.userId)
+          // } else {
+          //   console.log('error', e)
+          // }
+          // Firefox 无法建立到 http://localhost:5000/sse/connect?userId=1681436073256 服务器的连接。
+          // Uncaught TypeError: _this2.eventSource is null
+          // onerror order.vue:288
+          // else if (this.eventSource.readyState === EventSource.CONNECTING) {
+          //   console.log('SSE正在重连~userId:' + this.userId)
+          //   // 重新设置token
+          //   // this.eventSource.headers = {
+          //   //   'Authorization': 'test token'
+          //   // };
         }
       } else {
         console.log('你的浏览器不支持SSE~')
       }
     },
-    beforeDestroy() {
-      if (this.eventSource) {
-        // const { userId } = this.$store.state.user
-        // 前端关闭Sse
-        this.eventSource.close()
-        // 通知后端关闭Sse
-        closeSse(this.userId).then(() => {
-          console.log('退出登录或关闭浏览器，关闭SSE连接~')
-          this.eventSource = null
-        })
-      }
+    getCurrentTime() {
+      var _this = this;
+      let yy = new Date().getFullYear();
+      let mm = new Date().getMonth()+1;
+      let dd = new Date().getDate();
+      let hh = new Date().getHours();
+      let mf = new Date().getMinutes()<10 ? '0'+new Date().getMinutes() : new Date().getMinutes();
+      let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
+      _this.gettime = '【' + yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss + '】';
+      return _this.gettime
     },
+    // beforeDestroy() {
+    //   this.closeSse()
+    //   if (this.eventSource) {
+    //     // 前端关闭Sse
+    //     this.eventSource.close()
+    //     // 通知后端关闭Sse
+    //     this.closeSse()
+    //   }
+    // },
+    closeSse() {
+      // 退出登录或关闭浏览器
+      console.log(this.getCurrentTime() + '步骤3：关闭SSE连接~userId:' + this.userId)
+      var requestParam = {
+        userId: this.userId
+      }
+      closeSse(requestParam).then(() => {
+        this.eventSource = null
+      })
+    },
+    // destroyed() {
+    //   window.removeEventListener('beforeunload', this.closeSse())
+    // },
     handleFilter() {
       this.listQuery.page = 1
       this.getList()

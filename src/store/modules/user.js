@@ -47,7 +47,10 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      var requestParam = {
+        token: state.token
+      }
+      getInfo(requestParam).then(response => {
         const { data } = response
 
         if (!data) {

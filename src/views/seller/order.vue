@@ -7,13 +7,15 @@
         placeholder="状态关键字"
         style="width: 100px; height: 50px"
         class="filter-item"
-        @keyup.enter.native="handleFilter" />
+        @keyup.enter.native="handleFilter"
+      />
       <el-input
         v-model="listQuery.remark"
         placeholder="备注关键字"
         style="width: 100px; height: 50px"
         class="filter-item"
-        @keyup.enter.native="handleFilter" />
+        @keyup.enter.native="handleFilter"
+      />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -31,24 +33,24 @@
       highlight-current-row
       style="width: 100%;"
     >
-      <el-table-column label="订单ID" prop="id" align="center" width="70px" >
+      <el-table-column label="订单ID" prop="id" align="center" width="70px">
         <template slot-scope="{row}">
           <span>{{ row.orderId }}</span>
         </template>
       </el-table-column>
       <el-table-column label="客户" width="80px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.name}}</span>
+          <span>{{ row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="性别" width="60px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.gender == '0' ? '女' : '男'}}</span>
+          <span>{{ row.gender == '0' ? '女' : '男' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="手机号" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.mobile}}</span>
+          <span>{{ row.mobile }}</span>
         </template>
       </el-table-column>
       <el-table-column label="配送地址" width="250px" align="center">
@@ -86,7 +88,7 @@
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="235px" class-name="small-padding fixed-width" align="left" header-align="center" >
+      <el-table-column label="操作" width="235px" class-name="small-padding fixed-width" align="left" header-align="center">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleDetail(row)">
             商品详情
@@ -119,22 +121,22 @@
         highlight-current-row
         style="width: 400px;"
       >
-        <el-table-column label="商品ID" align="center" width="70px" >
+        <el-table-column label="商品ID" align="center" width="70px">
           <template slot-scope="{row}">
             <span>{{ row.commodityId }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="商品名称" align="center" width="110px" >
-        <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
-        </template>
-      </el-table-column>
-        <el-table-column label="商品价格" align="center" width="110px" >
+        <el-table-column label="商品名称" align="center" width="110px">
+          <template slot-scope="{row}">
+            <span>{{ row.name }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="商品价格" align="center" width="110px">
           <template slot-scope="{row}">
             <span>{{ row.price }} 元</span>
           </template>
         </el-table-column>
-        <el-table-column label="商品数量" align="center" width="110px" >
+        <el-table-column label="商品数量" align="center" width="110px">
           <template slot-scope="{row}">
             <span>x {{ row.quantity }}</span>
           </template>
@@ -302,14 +304,14 @@ export default {
       }
     },
     getCurrentTime() {
-      var _this = this;
-      let yy = new Date().getFullYear();
-      let mm = new Date().getMonth()+1;
-      let dd = new Date().getDate();
-      let hh = new Date().getHours();
-      let mf = new Date().getMinutes()<10 ? '0'+new Date().getMinutes() : new Date().getMinutes();
-      let ss = new Date().getSeconds()<10 ? '0'+new Date().getSeconds() : new Date().getSeconds();
-      _this.gettime = '【' + yy+'-'+mm+'-'+dd+' '+hh+':'+mf+':'+ss + '】';
+      var _this = this
+      const yy = new Date().getFullYear()
+      const mm = new Date().getMonth() + 1
+      const dd = new Date().getDate()
+      const hh = new Date().getHours()
+      const mf = new Date().getMinutes() < 10 ? '0' + new Date().getMinutes() : new Date().getMinutes()
+      const ss = new Date().getSeconds() < 10 ? '0' + new Date().getSeconds() : new Date().getSeconds()
+      _this.gettime = '【' + yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss + '】'
       return _this.gettime
     },
     // beforeDestroy() {

@@ -38,6 +38,8 @@ router.beforeEach(async(to, from, next) => {
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
+          // 此处报错，会在request.js 79行打印出，此处直接打出来
+          console.log('permission error: ' + error.message)
           // error -> error.message 否则Vue报一堆错
           Message.error(error.message || 'Has Error')
           next(`/login?redirect=${to.path}`)

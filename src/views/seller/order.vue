@@ -148,7 +148,7 @@
 </template>
 
 <script>
-import { editOrderInfo, deleteOrderInfo, findOrderList, closeSse } from '@/api/seller/order'
+import { editOrderInfo, deleteOrderInfo, findOrderList } from '@/api/seller/order'
 
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -314,25 +314,32 @@ export default {
       _this.gettime = '【' + yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss + '】'
       return _this.gettime
     },
-    beforeDestroy() {
-      if (this.eventSource) {
-        // 前端关闭Sse
-        this.eventSource.close()
-        // 通知后端关闭Sse 暂时不关闭后端，让后端push消息来删除后端Sse，
-        // 因为前端页面reload时，会新页面的建立Sse连接，快于旧页面的closeSse时间，导致刷新后Sse不可用，接收不到push消息
-        // this.closeSse()
-      }
-    },
-    closeSse() {
-      // 退出登录或关闭浏览器
-      console.log(this.getCurrentTime() + '步骤3：关闭SSE连接~userId:' + this.userId)
-      var requestParam = {
-        userId: this.userId
-      }
-      closeSse(requestParam).then(() => {
-        this.eventSource = null
-      })
-    },
+    // beforeDestroy() {
+    //   if (this.eventSource) {
+    //     // 前端关闭Sse
+    //     this.eventSource.close()
+    //     // 通知后端关闭Sse 暂时不关闭后端，让后端push消息来删除后端Sse，
+    //     // 因为前端页面reload时，会新页面的建立Sse连接，快于旧页面的closeSse时间，导致刷新后Sse不可用，接收不到push消息
+    //     // this.closeSse()
+    //   }
+    // },
+    // closeSse() {
+    //   console.log(this.getCurrentTime() + '步骤3：关闭SSE连接~userId2:' + this.userId)
+    //   // 退出登录或关闭浏览器
+    //   if (this.eventSource) {
+    //     // 前端关闭Sse
+    //     console.log(this.getCurrentTime() + '步骤3：关闭SSE连接~userId1:' + this.userId)
+    //     this.eventSource.close()
+    //     // 通知后端关闭Sse 暂时不关闭后端，让后端push消息来删除后端Sse，
+    //     // 因为前端页面reload时，会新页面的建立Sse连接，快于旧页面的closeSse时间，导致刷新后Sse不可用，接收不到push消息
+    //     // var requestParam = {
+    //     //   userId: this.userId
+    //     // }
+    //     // closeSse(requestParam).then(() => {
+    //     //   this.eventSource = null
+    //     // })
+    //   }
+    // },
     // destroyed() {
     //   window.removeEventListener('beforeunload', this.closeSse())
     // },

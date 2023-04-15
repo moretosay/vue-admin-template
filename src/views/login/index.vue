@@ -71,13 +71,10 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <div class="userinfo">
-          <el-form-item label="用户名" prop="userName" label-width="120px" style="background-color: white">
-            <el-input v-model="temp.userName" />
-            <!--placeholder="请输入用户名" style="width: 200px;color: #2b2f3a;border:1px solid #000; border-color: #d3dce6;"-->
-          </el-form-item>
-        </div>
-
+        <el-form-item label="用户名" prop="userName" label-width="120px" style="background-color: white">
+          <el-input v-model="temp.userName" placeholder="请输入初始密码" style="width: 200px;border:1px solid #000; border-color: #d3dce6" />
+          <!--placeholder="请输入用户名" style="width: 200px;color: #2b2f3a;border:1px solid #000; border-color: #d3dce6;"-->
+        </el-form-item>
 
         <el-form-item label="初始密码" prop="password" label-width="120px" style="background-color: white">
           <el-input v-model="temp.password" placeholder="请输入初始密码" style="width: 200px;border:1px solid #000; border-color: #d3dce6;" />
@@ -271,8 +268,8 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg:#283443;
-$light_gray:#fff;
-$cursor: #fff;
+$light_gray:#97a8be;
+$cursor:#20a0ff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {

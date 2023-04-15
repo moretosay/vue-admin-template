@@ -70,7 +70,6 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      console.log('logout222222' + JSON.stringify(state.token))
       var requestParam = {
         token: state.token
       }

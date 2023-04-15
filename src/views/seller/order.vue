@@ -314,15 +314,15 @@ export default {
       _this.gettime = '【' + yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss + '】'
       return _this.gettime
     },
-    // beforeDestroy() {
-    //   this.closeSse()
-    //   if (this.eventSource) {
-    //     // 前端关闭Sse
-    //     this.eventSource.close()
-    //     // 通知后端关闭Sse
-    //     this.closeSse()
-    //   }
-    // },
+    beforeDestroy() {
+      if (this.eventSource) {
+        // 前端关闭Sse
+        this.eventSource.close()
+        // 通知后端关闭Sse 暂时不关闭后端，让后端push消息来删除后端Sse，
+        // 因为前端页面reload时，会新页面的建立Sse连接，快于旧页面的closeSse时间，导致刷新后Sse不可用，接收不到push消息
+        // this.closeSse()
+      }
+    },
     closeSse() {
       // 退出登录或关闭浏览器
       console.log(this.getCurrentTime() + '步骤3：关闭SSE连接~userId:' + this.userId)

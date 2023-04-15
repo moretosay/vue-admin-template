@@ -76,20 +76,20 @@
           <!--placeholder="请输入用户名" style="width: 200px;color: #2b2f3a;border:1px solid #000; border-color: #d3dce6;"-->
         </el-form-item>
 
-        <el-form-item label="初始密码" prop="password" label-width="120px" style="background-color: white">
-          <el-input v-model="temp.password" placeholder="请输入初始密码" style="width: 200px;border:1px solid #000; border-color: #d3dce6;" />
+        <el-form-item label="密  码" prop="password" label-width="120px" style="background-color: white">
+          <el-input v-model="temp.password" placeholder="请输入密码" style="width: 200px;border:1px solid #000; border-color: #d3dce6;" />
+        </el-form-item>
+
+        <el-form-item label="确认密码" prop="surePassword" label-width="120px" style="background-color: white">
+          <el-input v-model="temp.surePassword" placeholder="请确认密码" style="width: 200px;border:1px solid #000; border-color: #d3dce6;" />
         </el-form-item>
 
         <el-form-item label="* 手机号" prop="mobile" label-width="120px" style="background-color: white">
           <el-input v-model="temp.mobile" placeholder="请输入手机号" style="width: 200px;border:1px solid #000; border-color: #d3dce6;" />
         </el-form-item>
 
-        <el-form-item label="* 邮箱" prop="email" label-width="120px" style="background-color: white">
+        <el-form-item label="* 邮 箱" prop="email" label-width="120px" style="background-color: white">
           <el-input v-model="temp.email" placeholder="请输入邮箱" style="width: 200px;border:1px solid #000; border-color: #d3dce6;" />
-        </el-form-item>
-
-        <el-form-item label="* 个人简介" prop="introduction" label-width="120px" style="background-color: white">
-          <el-input v-model="temp.introduction" placeholder="请输入介绍" style="width: 200px;border:1px solid #000; border-color: #d3dce6;" />
         </el-form-item>
 
       </el-form>
@@ -147,7 +147,8 @@ export default {
       },
       rules: {
         userName: [{ required: true, message: '用户名必填', trigger: 'blur' }],
-        password: [{ required: true, message: '初始密码必填', trigger: 'blur' }]
+        password: [{ required: true, message: '密码必填', trigger: 'blur' }],
+        surePassword: [{ required: true, message: '确认密码必填', trigger: 'blur' }]
       },
       temp: {
         userName: undefined

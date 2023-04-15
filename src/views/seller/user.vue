@@ -89,11 +89,11 @@
           <el-input v-model="temp.password" placeholder="请输入初始密码" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="手机号" prop="mobile" label-width="120px">
+        <el-form-item label="* 手机号" prop="mobile" label-width="120px">
           <el-input v-model="temp.mobile" placeholder="请输入手机号" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="邮箱" prop="email" label-width="120px">
+        <el-form-item label="* 邮箱" prop="email" label-width="120px">
           <el-input v-model="temp.email" placeholder="请输入邮箱" style="width: 200px;" />
         </el-form-item>
 
@@ -101,7 +101,7 @@
           <el-input v-model="temp.introduction" placeholder="请输入介绍" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="添加角色" prop="roleCodeList" label-width="120px">
+        <el-form-item label="* 添加角色" prop="roleCodeList" label-width="120px">
           <el-checkbox-group v-model="temp.roleCodeList">
             <el-checkbox v-for="item in roleList" :key="item.roleCode" :label="item.roleCode">
               <span>角色Code:{{ item.roleCode }}</span>
@@ -109,7 +109,7 @@
           </el-checkbox-group>
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="sellerIdList" label-width="120px">
+        <el-form-item label="* 关联商家" prop="sellerIdList" label-width="120px">
           <el-checkbox-group v-model="temp.sellerIdList">
             <el-checkbox v-for="item in sellerList" :key="item.sellerId" :label="item.sellerId">
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
@@ -171,8 +171,6 @@ export default {
         update: '编辑用户',
         create: '新增用户'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         userName: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         password: [{ required: true, message: '初始密码必填', trigger: 'blur' }]

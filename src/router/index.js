@@ -107,6 +107,32 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/role',
+    component: Layout,
+    name: 'Role',
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/seller/role'),
+        name: 'RoleDetail',
+        meta: { title: '角色管理', icon: 'user' }
+      }
+    ]
+  },
+  {
+    path: '/user',
+    component: Layout,
+    name: 'User',
+    children: [
+      {
+        path: 'detail',
+        component: () => import('@/views/seller/user'),
+        name: 'UserDetail',
+        meta: { title: '用户管理', icon: 'user' }
+      }
+    ]
+  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

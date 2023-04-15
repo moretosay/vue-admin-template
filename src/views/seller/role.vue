@@ -5,11 +5,11 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate" >
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增角色
       </el-button>
       <!--<el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">-->
-        <!--导出-->
+      <!--导出-->
       <!--</el-button>-->
     </div>
 
@@ -22,7 +22,7 @@
       highlight-current-row
       style="width: 640px;"
     >
-      <el-table-column label="角色ID" prop="id" align="center" width="70px" >
+      <el-table-column label="角色ID" prop="id" align="center" width="70px">
         <template slot-scope="{row}">
           <span>{{ row.roleId }}</span>
         </template>
@@ -36,7 +36,6 @@
         <template slot-scope="{row}">
           <span>{{ row.roleDesc }}</span>
         </template>
-      </el-table-column>
       </el-table-column>
       <el-table-column label="操作" align="center" width="170px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
@@ -57,11 +56,11 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="角色Code" prop="name" label-width="120px" >
+        <el-form-item label="角色Code" prop="name" label-width="120px">
           <el-input v-model="temp.roleCode" placeholder="请输入角色Code" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="角色描述" prop="name" label-width="120px" >
+        <el-form-item label="角色描述" prop="name" label-width="120px">
           <el-input v-model="temp.roleDesc" placeholder="请输入角色描述" style="width: 200px;" />
         </el-form-item>
 
@@ -234,7 +233,7 @@ export default {
         // 展示框中删除对应记录
         this.list.splice(index, 1)
       })
-    },
+    }
   }
 }
 </script>

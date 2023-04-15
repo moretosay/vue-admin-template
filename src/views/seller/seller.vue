@@ -123,7 +123,7 @@
           <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;"/> 元
         </el-form-item>
 
-        <el-form-item label="# 商家logo图片" prop="logoPicUrl" label-width="120px" >
+        <el-form-item label="# Logo图片" prop="logoPicUrl" label-width="120px" >
           <el-upload
            ref="upfile"
            style="display: inline"

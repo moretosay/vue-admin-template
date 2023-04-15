@@ -17,38 +17,38 @@
       border
       fit
       highlight-current-row
-      style="width: 990px;"
+      style="width: 820px;"
     >
       <el-table-column label="用户ID" align="center" width="70px">
         <template slot-scope="{row}">
           <span>{{ row.userId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="110px" align="center">
+      <el-table-column label="用户名" width="100px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.userName }}</span>
         </template>
       </el-table-column>
       <!--<el-table-column label="头像" width="100px" align="center">-->
-        <!--&lt;!&ndash;scope相当于一行的数据， scope.row相当于当前行的数据对象&ndash;&gt;-->
-        <!--<template slot-scope="scope">-->
-          <!--<el-avatar v-if="scope.row.headPicUrl != null" shape="square" :size="60" :src="scope.row.headPicUrl" />-->
-          <!--<span v-if="scope.row.headPicUrl == null"> 待上传</span>-->
-        <!--</template>-->
+      <!--&lt;!&ndash;scope相当于一行的数据， scope.row相当于当前行的数据对象&ndash;&gt;-->
+      <!--<template slot-scope="scope">-->
+      <!--<el-avatar v-if="scope.row.headPicUrl != null" shape="square" :size="60" :src="scope.row.headPicUrl" />-->
+      <!--<span v-if="scope.row.headPicUrl == null"> 待上传</span>-->
+      <!--</template>-->
       <!--</el-table-column>-->
-      <el-table-column label="个人简介" width="110px" align="center">
+      <el-table-column label="个人简介" width="150px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.introduction }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="添加角色" width="220px" align="center" >
+      <el-table-column label="添加角色" width="220px" align="left" header-align="center">
         <template slot-scope="{row}">
-          <span v-for="item in row.roleCodeList" >{{ '【' + item + '】' }}</span>
+          <span v-for="item in row.roleCodeList" :key="item" :v-bind:key="item">{{ '【' + item + '】' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="关联商家" width="220px" align="center" >
+      <el-table-column label="关联商家" width="110px" align="left" header-align="center">
         <template slot-scope="{row}">
-          <span v-for="item in row.sellerIdList" >{{ '【商家ID:' +  item + '】' }}</span>
+          <span v-for="item in row.sellerIdList" :key="item" :v-bind:key="item">{{ '【商家ID:' + item + '】' }}</span>
         </template>
       </el-table-column>
 
@@ -241,7 +241,7 @@ export default {
             roleCodeList: this.temp.roleCodeList,
             sellerIdList: this.temp.sellerIdList,
             // 头像，只用于后台系统的右上角的头像展示，没必要提供添加和编辑功能，后续用户真有需求，可以完善下
-            headPicUrl: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+            headPicUrl: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
           }
           addUserInfo(requestBody).then(response => {
             // 将记录添加到Table中，不再reload页面

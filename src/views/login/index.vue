@@ -41,14 +41,53 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
-      <div class="tips">
-        <span style="margin-right:20px;">userName: admin</span>
-        <span> password: any</span>
-      </div>
-
+      <el-table-column>
+        <el-button
+          :loading="loading"
+          type="primary"
+          style="width: 219px;margin-bottom:30px;"
+          @click.native.prevent="handleLogin"
+        >Login</el-button>
+        <el-button
+          :loading="loading"
+          type="primary"
+          style="width: 219px;margin-bottom:30px;"
+          @click.native.prevent="handleRegister"
+        >Register</el-button>
+      </el-table-column>
+      <!--<div class="tips">-->
+      <!--<span style="margin-right:20px;">userName: admin</span>-->
+      <!--<span> password: any</span>-->
+      <!--</div>-->
     </el-form>
+
+    <!-- :visible.sync，vue标签，设置动态的显示内容与否 -->
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+
+        <el-form-item label="用户名" prop="userName" label-width="120px">
+          <el-input v-model="temp.userName" placeholder="请输入用户名" style="width: 200px;" />
+        </el-form-item>
+
+        <el-form-item label="初始密码" prop="password" label-width="120px">
+          <el-input v-model="temp.password" placeholder="请输入初始密码" style="width: 200px;" />
+        </el-form-item>
+
+        <el-form-item label="* 个人简介" prop="introduction" label-width="120px">
+          <el-input v-model="temp.introduction" placeholder="请输入介绍" style="width: 200px;" />
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="createData">
+          确认
+        </el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -120,6 +159,9 @@ export default {
           return false
         }
       })
+    },
+    handleRegister() {
+
     }
   }
 }

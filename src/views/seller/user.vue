@@ -17,7 +17,7 @@
       border
       fit
       highlight-current-row
-      style="width: 820px;"
+      style="width: 1085px;"
     >
       <el-table-column label="用户ID" align="center" width="70px">
         <template slot-scope="{row}">
@@ -27,6 +27,16 @@
       <el-table-column label="用户名" width="100px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.userName }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="手机号" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.mobile }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="邮箱" width="155px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.email }}</span>
         </template>
       </el-table-column>
       <!--<el-table-column label="头像" width="100px" align="center">-->
@@ -77,6 +87,14 @@
 
         <el-form-item label="初始密码" prop="password" label-width="120px">
           <el-input v-model="temp.password" placeholder="请输入初始密码" style="width: 200px;" />
+        </el-form-item>
+
+        <el-form-item label="手机号" prop="mobile" label-width="120px">
+          <el-input v-model="temp.mobile" placeholder="请输入手机号" style="width: 200px;" />
+        </el-form-item>
+
+        <el-form-item label="邮箱" prop="email" label-width="120px">
+          <el-input v-model="temp.email" placeholder="请输入邮箱" style="width: 200px;" />
         </el-form-item>
 
         <el-form-item label="* 个人简介" prop="introduction" label-width="120px">
@@ -237,6 +255,8 @@ export default {
           var requestBody = {
             userName: this.temp.userName,
             password: this.temp.password,
+            mobile: this.temp.mobile,
+            email: this.temp.email,
             introduction: this.temp.introduction,
             roleCodeList: this.temp.roleCodeList,
             sellerIdList: this.temp.sellerIdList,
@@ -253,8 +273,8 @@ export default {
               type: 'success',
               duration: 2000
             })
+            this.reload()
           })
-          this.reload()
         }
       })
     },
@@ -274,6 +294,8 @@ export default {
             userId: this.temp.userId,
             userName: this.temp.userName,
             password: this.temp.password,
+            mobile: this.temp.mobile,
+            email: this.temp.email,
             introduction: this.temp.introduction,
             roleCodeList: this.temp.roleCodeList,
             sellerIdList: this.temp.sellerIdList

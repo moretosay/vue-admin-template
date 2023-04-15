@@ -102,7 +102,6 @@ export default {
         roleCode: undefined
       },
       showReviewer: false,
-      sellerList: [],
       temp: {
         id: undefined,
         // importance: 1,

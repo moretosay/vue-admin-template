@@ -70,9 +70,9 @@ module.exports = [
     }
   },
 
-  // user logout
+  // user loginOut
   {
-    url: '/vue-admin-template/user/logout',
+    url: '/vue-admin-template/user/loginOut',
     type: 'post',
     response: _ => {
       return {

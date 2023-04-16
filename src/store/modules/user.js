@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, loginOut, getInfo } from '@/api/seller/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -56,10 +56,10 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { name, avatar } = data
+        const { name, headPicUrl } = data
 
         commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
+        commit('SET_AVATAR', headPicUrl)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -67,13 +67,13 @@ const actions = {
     })
   },
 
-  // user logout
-  logout({ commit, state }) {
+  // user loginOut
+  loginOut({ commit, state }) {
     return new Promise((resolve, reject) => {
       var requestParam = {
         token: state.token
       }
-      logout(requestParam).then(() => {
+      loginOut(requestParam).then(() => {
         removeToken() // must remove  token  first
         resetRouter()
         commit('RESET_STATE')

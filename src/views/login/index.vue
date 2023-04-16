@@ -134,7 +134,8 @@ export default {
         password: '123456'
       },
       loginRules: {
-        userName: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        // 登录时，不验证是否为valid_map = ['admin', 'editor']
+        // userName: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,

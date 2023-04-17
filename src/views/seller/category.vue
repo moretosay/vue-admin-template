@@ -20,7 +20,7 @@
       border
       fit
       highlight-current-row
-      style="width: 550px;"
+      style="width: 630px;"
       @sort-change="sortChange"
     >
       <el-table-column label="类目ID" prop="id" align="center" width="70px" >
@@ -36,6 +36,11 @@
       <el-table-column label="关联商家" width="200px" align="left" header-align="center">
         <template slot-scope="{row}" style="align-content: left">
           <span>{{ row.sellerName }} 【商家ID:{{ row.sellerId }}】</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序参数" width="80px" align="left" header-align="center">
+        <template slot-scope="{row}" style="align-content: left">
+          <span>{{ row.sortNum }} </span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="170px" class-name="small-padding fixed-width">
@@ -61,21 +66,25 @@
           <el-input v-model="temp.name" placeholder="请输入类目名称" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'" >
+        <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'">
           <el-checkbox-group v-model="temp.checkBoxSellerIdList">
-            <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId" >
+            <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
           <span style="color: green" >功能Tip：可关联多个商家，生成多条类目！</span>
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'" >
+        <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'">
           <el-radio-group v-model="temp.radioSellerId">
-            <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId" >
+            <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-radio>
           </el-radio-group>
+        </el-form-item>
+
+        <el-form-item label="* 排序参数" prop="sortNum" label-width="120px">
+          <el-input v-model="temp.sortNum" placeholder="请输入排序参数" style="width: 200px;" />
         </el-form-item>
 
       </el-form>
@@ -216,7 +225,6 @@ export default {
       }
       findSellerList(requestBody).then(response => {
         this.sellerList = response.data.list
-        // this.total = response.data.total
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -233,7 +241,8 @@ export default {
         if (valid) {
           var requestBody = {
             name: this.temp.name,
-            sellerIdList: this.temp.checkBoxSellerIdList
+            sellerIdList: this.temp.checkBoxSellerIdList,
+            sortNum: this.temp.sortNum
           }
           addCategoryList(requestBody).then(response => {
             // 批量新增不将多条类目新增到原表中，还是考虑刷新页面
@@ -284,7 +293,8 @@ export default {
           var requestBody = {
             categoryId: this.temp.categoryId,
             name: this.temp.name,
-            sellerId: this.temp.radioSellerId
+            sellerId: this.temp.radioSellerId,
+            sortNum: this.temp.sortNum
           }
           editCategoryInfo(requestBody).then(() => {
             // const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
@@ -317,26 +327,6 @@ export default {
         // this.reload()
       })
     },
-    handleModifyStatus(row, status) {
-      this.temp = Object.assign({}, row) // copy obj
-      var requestBody = {
-        sellerId: this.temp.sellerId,
-        status: status
-      }
-      this.temp.status = status
-      editSellerInfo(requestBody).then(() => {
-        const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
-        // 展示框中更新对应记录
-        this.list.splice(index, 1, this.temp)
-        this.dialogFormVisible = false
-        this.$notify({
-          title: 'Success',
-          message: status === 'published' ? '商家发布成功' : '商家已下线',
-          type: 'success',
-          duration: 2000
-        })
-      })
-    }
   }
 }
 </script>

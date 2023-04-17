@@ -20,7 +20,7 @@
       border
       fit
       highlight-current-row
-      style="width: 990px;"
+      style="width: 940px;"
       @sort-change="sortChange"
     >
       <el-table-column label="商品ID" prop="id" align="center" width="70px" >
@@ -50,9 +50,14 @@
           <span>{{ row.price }}</span> 元
         </template>
       </el-table-column>
-      <el-table-column label="关联类目" width="330px" align="left" header-align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.categoryName }} 【类目ID:{{ row.categoryId }}, 所属商家: {{ row.sellerName }}】</span>
+      <el-table-column label="关联商家" width="200px" align="left" header-align="center">
+        <template slot-scope="{row}" style="align-content: left">
+          <span>{{ row.sellerName }} 【商家ID:{{ row.sellerId }}】</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="排序参数" width="80px" align="left" header-align="center">
+        <template slot-scope="{row}" style="align-content: left">
+          <span>{{ row.sortNum }} </span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="170px" class-name="small-padding fixed-width">
@@ -78,7 +83,7 @@
           <el-input v-model="temp.name" placeholder="请输入商品名称" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="# 商品简介" prop="summary" label-width="120px" >
+        <el-form-item label="* 商品简介" prop="summary" label-width="120px" >
           <el-input v-model="temp.summary" placeholder="请输入商品简介" style="width: 200px;" />
         </el-form-item>
 
@@ -86,24 +91,24 @@
           <el-input v-model="temp.price" placeholder="请输入商品价格" style="width: 200px;" /> 元
         </el-form-item>
 
-        <el-form-item label="关联类目" prop="checkBoxCategoryIdList" label-width="120px" v-if="dialogStatus==='create'" >
-          <el-checkbox-group v-model="temp.checkBoxCategoryIdList">
-            <el-checkbox :label="item.categoryId" v-for="item in categoryList" :key="item.categoryId" >
-              <span>{{ item.name }} 【类目ID:{{ item.categoryId }}, 所属商家: {{ item.sellerName }}】</span>
+        <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'">
+          <el-checkbox-group v-model="temp.checkBoxSellerIdList">
+            <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
+              <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
-          <span style="color: green" >功能Tip：可关联多条类目，生成多个商品！</span>
+          <span style="color: green" >功能Tip：可关联多个商家，生成多个商品！</span>
         </el-form-item>
 
-        <el-form-item label="关联类目" prop="radioCategoryId" label-width="120px" v-if="dialogStatus!=='create'" >
-          <el-radio-group v-model="temp.radioCategoryId">
-            <el-radio :label="item.categoryId" v-for="item in categoryList" :key="item.categoryId" >
-              <span>{{ item.name }} 【类目ID:{{ item.categoryId }}, 所属商家: {{ item.sellerName }}】</span>
+        <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'">
+          <el-radio-group v-model="temp.radioSellerId">
+            <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
+              <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="# 商品主图" prop="mainUrl" label-width="120px" >
+        <el-form-item label="* 商品主图" prop="mainUrl" label-width="120px" >
           <el-upload
             ref="upfile"
             style="display: inline"
@@ -116,6 +121,10 @@
               上传
             </el-button>
           </el-upload>
+        </el-form-item>
+
+        <el-form-item label="* 排序参数" prop="sortNum" label-width="120px">
+          <el-input v-model="temp.sortNum" placeholder="请输入排序参数" style="width: 200px;" />
         </el-form-item>
 
       </el-form>
@@ -134,7 +143,7 @@
 
 <script>
 import { addCommodityList, addCommodityListContainPic, editCommodityInfo, editCommodityInfoContainPic, deleteCommodityInfo, findCommodityList } from '@/api/seller/commodity'
-import { findCategoryList } from '@/api/seller/category'
+import { findSellerList } from '@/api/seller/seller'
 
 import waves from '@/directive/waves' // waves directive
 // import { parseTime } from '@/utils'
@@ -171,9 +180,10 @@ export default {
       },
       // calendarTypeOptions,
       // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
-      categoryList: [],
+      // statusOptions: ['published', 'draft', 'deleted'],
+      // showReviewer: false,
+      // categoryList: [],
+      sellerList: [],
       temp: {
         id: undefined,
         importance: 1,
@@ -194,8 +204,8 @@ export default {
       rules: {
         name: [{ required: true, message: '商品名称必填', trigger: 'blur' }],
         price: [{ required: true, message: '商品价格必填', trigger: 'blur' }],
-        checkBoxCategoryIdList: [{ required: true, message: '类目必选', trigger: 'change' }],
-        radioCategoryId: [{ required: true, message: '类目必选', trigger: 'change' }]
+        checkBoxSellerIdList: [{ required: true, message: '商家必选', trigger: 'change' }],
+        radioSellerId: [{ required: true, message: '商家必选', trigger: 'change' }]
       },
       downloadLoading: false
     }
@@ -246,7 +256,7 @@ export default {
         title: '',
         status: 'published',
         type: '',
-        checkBoxCategoryIdList: []
+        checkBoxSellerIdList: []
       }
     },
     handleCreate() {
@@ -256,8 +266,9 @@ export default {
         pageNum: 1,
         pageSize: 20// 不可能超过20个商家吧！
       }
-      findCategoryList(requestBody).then(response => {
-        this.categoryList = response.data.list
+      findSellerList(requestBody).then(response => {
+        this.sellerList = response.data.list
+        console.log('888888' + JSON.stringify(this.sellerList))
         // this.total = response.data.total
         setTimeout(() => {
           this.listLoading = false
@@ -283,7 +294,8 @@ export default {
               name: this.temp.name,
               summary: this.temp.summary,
               price: this.temp.price,
-              categoryIdList: this.temp.checkBoxCategoryIdList
+              sellerIdList: this.temp.checkBoxSellerIdList,
+              sortNum: this.temp.sortNum
             }
             addCommodityList(requestBody).then(response => {
               this.commonCreateData(response)
@@ -294,7 +306,8 @@ export default {
             fd.append('name', this.temp.name)
             fd.append('summary', this.temp.summary)
             fd.append('price', this.temp.price)
-            fd.append('categoryIdList', this.temp.checkBoxCategoryIdList)
+            fd.append('sellerIdList', this.temp.checkBoxSellerIdList)
+            fd.append('sortNum', this.temp.sortNum)
             this.fileList.forEach(item => {
               fd.append('mainFile', item.raw)
             })
@@ -321,8 +334,8 @@ export default {
         pageNum: 1,
         pageSize: 20// 不可能超过20个商家吧！
       }
-      findCategoryList(requestBody).then(response => {
-        this.categoryList = response.data.list
+      findSellerList(requestBody).then(response => {
+        this.sellerList = response.data.list
         // this.total = response.data.total
         setTimeout(() => {
           this.listLoading = false
@@ -330,10 +343,10 @@ export default {
       })
       // todo
       this.temp = Object.assign({}, row) // copy obj
-      // 此种方式赋值，radioCategoryId 对应的组件不可修改
-      // this.temp.radioCategoryId = this.temp.categoryId
-      // radioCategoryId 对应的组件可修改
-      this.$set(this.temp, 'radioCategoryId', this.temp.categoryId)
+      // 此种方式赋值，radioSellerId 对应的组件不可修改
+      // this.temp.radioSellerId = this.temp.sellerId
+      // radioSellerId 对应的组件可修改
+      this.$set(this.temp, 'radioSellerId', this.temp.sellerId)
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -350,7 +363,8 @@ export default {
               name: this.temp.name,
               summary: this.temp.summary,
               price: this.temp.price,
-              categoryId: this.temp.radioCategoryId
+              sellerId: this.temp.radioSellerId,
+              sortNum: this.temp.sortNum
             }
             // 不上传主图
             editCommodityInfo(requestBody).then(() => {
@@ -363,7 +377,7 @@ export default {
             fd.append('name', this.temp.name)
             fd.append('summary', this.temp.summary)
             fd.append('price', this.temp.price)
-            fd.append('categoryId', this.temp.radioCategoryId)
+            fd.append('sellerId', this.temp.radioSellerId)
             this.fileList.forEach(item => {
               fd.append('mainFile', item.raw)
             })
@@ -398,33 +412,6 @@ export default {
         // this.reload()
       })
     }
-    // handleDownload() {
-    //   this.downloadLoading = true
-    //   import('@/vendor/Export2Excel').then(excel => {
-    //     const tHeader = ['商家ID', '商家名称', '商家简介', '营业开始时间', '营业结束时间', '最小起送金额', '配送费', 'status']
-    //     const filterVal = ['sellerId', 'name', 'summary', 'businessStartTime', 'businessEndTime', 'minAmount', 'expressFee', 'status']
-    //     const data = this.formatJson(filterVal)
-    //     excel.export_json_to_excel({
-    //       header: tHeader,
-    //       data,
-    //       filename: 'table-list'
-    //     })
-    //     this.downloadLoading = false
-    //   })
-    // },
-    // formatJson(filterVal) {
-    //   return this.list.map(v => filterVal.map(j => {
-    //     if (j === 'timestamp') {
-    //       return parseTime(v[j])
-    //     } else {
-    //       return v[j]
-    //     }
-    //   }))
-    // },
-    // getSortClass: function(key) {
-    //   // const sort = this.listQuery.sort
-    //   // return sort === `+${key}` ? 'ascending' : 'descending'
-    // }
   }
 }
 </script>

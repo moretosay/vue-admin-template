@@ -8,20 +8,15 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate" >
         新增类目
       </el-button>
-      <!--<el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">-->
-        <!--导出-->
-      <!--</el-button>-->
     </div>
 
     <el-table
-      :key="tableKey"
       v-loading="listLoading"
       :data="list"
       border
       fit
       highlight-current-row
       style="width: 710px;"
-      @sort-change="sortChange"
     >
       <el-table-column label="类目ID" prop="id" align="center" width="70px" >
         <template slot-scope="{row}">
@@ -101,6 +96,57 @@
     </div>
   </el-dialog>
 
+  <!-- :visible.sync，vue标签，设置动态的显示内容与否 :visible.sync="dialogFormVisible" -->
+  <el-dialog :title="commodityTextMap[commodityDialogStatus]" :visible.sync="commodityDialogFormVisible">
+    <el-form ref="commodityDataForm" :model="commodityTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+
+      <el-table
+        v-loading="listLoading"
+        :data="list"
+        border
+        fit
+        highlight-current-row
+        style="width: 710px;"
+      >
+        <!--todo-->
+        <el-table-column label="类目ID" prop="id" align="center" width="70px" >
+          <template slot-scope="{row}">
+            <span>{{ row.categoryId }}</span>
+          </template>
+        </el-table-column>
+        <!--<el-table-column label="类目名称" width="110px" align="center">-->
+          <!--<template slot-scope="{row}">-->
+            <!--<span>{{ row.name }}</span>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+        <!--<el-table-column label="关联商家" width="200px" align="left" header-align="center">-->
+          <!--<template slot-scope="{row}" style="align-content: left">-->
+            <!--<span>{{ row.sellerName }} 【商家ID:{{ row.sellerId }}】</span>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+        <!--<el-table-column label="排序参数" width="80px" align="left" header-align="center">-->
+          <!--<template slot-scope="{row}" style="align-content: left">-->
+            <!--<span>{{ row.sortNum }} </span>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+        <!--<el-table-column label="操作" align="center" width="250px" class-name="small-padding fixed-width">-->
+          <!--<template slot-scope="{row,$index}">-->
+            <!--<el-button type="primary" size="mini" @click="handleUpdate(row)">-->
+              <!--编辑-->
+            <!--</el-button>-->
+            <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">-->
+              <!--删除-->
+            <!--</el-button>-->
+            <!--<el-button size="mini" type="success" @click="handleCommodity(row)">-->
+              <!--关联商品-->
+            <!--</el-button>-->
+          <!--</template>-->
+        <!--</el-table-column>-->
+      </el-table>
+
+    </el-form>
+  </el-dialog>
+
   </div>
 </template>
 
@@ -109,7 +155,6 @@ import { addCategoryList, editCategoryInfo, deleteCategoryInfo, findCategoryList
 import { findSellerList, editSellerInfo } from '@/api/seller/seller'
 
 import waves from '@/directive/waves' // waves directive
-// import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
@@ -117,51 +162,31 @@ export default {
   name: 'Category',
   components: { Pagination },
   directives: { waves },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   data() {
     return {
-      tableKey: 0,
       list: null,
       total: 0,
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        limit: 10
       },
-      // calendarTypeOptions,
-      // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
-      sellerList: [],
-      temp: {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published'
-      },
-      dialogFormVisible: false,
-      dialogStatus: '',
       textMap: {
         update: '编辑类目',
         create: '新增类目'
       },
-      dialogPvVisible: false,
-      pvData: [],
+      dialogFormVisible: false,
+      dialogStatus: '',
+      temp: {
+      },
+      sellerList: [],
+      commodityTextMap: {
+        create: '关联商品列表'
+      },
+      commodityDialogFormVisible: false,
+      commodityDialogStatus: '',
+      commodityTemp: {
+      },
       rules: {
         name: [{ required: true, message: '类目名称必填', trigger: 'blur' }],
         checkBoxSellerIdList: [{ required: true, message: '商家必选', trigger: 'change' }],
@@ -193,30 +218,14 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: '',
         checkBoxSellerIdList: []
+      }
+    },
+    resetCommodityTemp() {
+      this.temp = {
+        name: 'asd'
       }
     },
     handleCreate() {
@@ -330,8 +339,13 @@ export default {
         // this.reload()
       })
     },
-    handleCommodity(row, index) {
-
+    handleCommodity() {
+      this.resetCommodityTemp()
+      this.commodityDialogStatus = 'create'
+      this.commodityDialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['commodityDataForm'].clearValidate()
+      })
     }
   }
 }

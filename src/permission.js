@@ -32,14 +32,25 @@ router.beforeEach(async(to, from, next) => {
       } else {
         try {
           // get user info
-          await store.dispatch('user/getInfo')
+          // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
+          // todo
+          const { roleCodeList } = await store.dispatch('user/getInfo')
+          // generate accessible routes map based on roles
+          const accessRoutes = await store.dispatch('permission/generateRoutes', roleCodeList)
 
-          next()
+          // dynamically add accessible routes
+          router.addRoutes(accessRoutes)
+
+          // hack method to ensure that addRoutes is complete
+          // set the replace: true, so the navigation will not leave a history record
+          // next({ ...to, replace: true })中的replace: true只是一个设置信息，告诉VUE本次操作后，不能通过浏览器后退按钮，返回前一个路由。
+          next({ ...to, replace: true })
+          // next()
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
           // 此处报错，会在request.js 79行打印出，此处直接打出来
-          console.log('permission error: ' + error.message)
+          console.log('src/permission.js error: ' + error.message)
           // error -> error.message 否则Vue报一堆错
           Message.error(error.message || 'Has Error')
           next(`/login?redirect=${to.path}`)

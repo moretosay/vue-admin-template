@@ -106,7 +106,20 @@ export const constantRoutes = [
         meta: { title: '订单管理', icon: 'table' }
       }
     ]
-  },
+  }
+
+  // 404 page must be placed at the end !!!
+  // 动态路由，即权限控制的路由模块是动态添加进去的，404监听路由是在默认路由里面的，优先级比动态路由要高，所以刷新后默认先被404接管了，
+  // 把404监听路由也放到动态路由的末尾就可以了
+  // { path: '*', redirect: '/404', hidden: true }
+]
+
+/**
+ * asyncRoutes
+ * the routes that need to be dynamically loaded based on user roles
+ */
+export const asyncRoutes = [
+
   {
     path: '/role',
     component: Layout,
@@ -116,7 +129,7 @@ export const constantRoutes = [
         path: 'detail',
         component: () => import('@/views/seller/role'),
         name: 'RoleDetail',
-        meta: { title: '角色管理', icon: 'user' }
+        meta: { title: '角色管理', icon: 'user', roles: ['admin'] }
       }
     ]
   },
@@ -129,11 +142,10 @@ export const constantRoutes = [
         path: 'detail',
         component: () => import('@/views/seller/user'),
         name: 'UserDetail',
-        meta: { title: '用户管理', icon: 'user' }
+        meta: { title: '用户管理', icon: 'user', roles: ['admin'] }
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

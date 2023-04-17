@@ -62,9 +62,9 @@ const actions = {
 
         const { userName, roleCodeList, headPicUrl } = data
 
-        if (!roleCodeList || roleCodeList.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
-        }
+        // if (!roleCodeList || roleCodeList.length <= 0) {
+        //   reject('getInfo: roles must be a non-null array!')
+        // }
 
         // commit('SET_ROLES', roleCodeList)
         commit('SET_NAME', userName)

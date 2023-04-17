@@ -4,7 +4,7 @@ export function generateCheckCode(data) {
   return request({
     url: 'http://localhost:5000/user/generateCheckCode',
     method: 'post',
-    params: data
+    data
   })
 }
 
@@ -37,6 +37,14 @@ export function loginOut(data) {
     url: 'http://localhost:5000/user/loginOut',
     method: 'post',
     params: data
+  })
+}
+
+export function forgetPassword(data) {
+  return request({
+    url: 'http://localhost:5000/user/forgetPassword',
+    method: 'post',
+    data
   })
 }
 

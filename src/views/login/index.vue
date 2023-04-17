@@ -58,7 +58,7 @@
           :loading="loading"
           type="primary"
           style="width: 143px;margin-bottom:30px;"
-          @click.native.prevent="handleLogin"
+          @click.native.prevent="handleForgetPassword"
         >忘记密码</el-button>
       </el-table-column>
       <!--<div class="tips">-->
@@ -71,7 +71,7 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="用户名" prop="userName" label-width="120px" style="background-color: white">
+        <el-form-item v-if="dialogStatus==='register'" label="用户名" prop="userName" label-width="120px" style="background-color: white">
           <el-input v-model="temp.userName" placeholder="请输入初始密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6" />
         </el-form-item>
 
@@ -83,13 +83,17 @@
           <el-input v-model="temp.surePassword" placeholder="请确认密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" />
         </el-form-item>
 
-        <el-form-item label="手机号" prop="mobile" label-width="120px" style="background-color: white">
+        <el-form-item label="* 手机号" prop="mobile" label-width="120px" style="background-color: white">
           <el-input v-model="temp.mobile" placeholder="请输入手机号" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" />
+        </el-form-item>
+
+        <el-form-item label="* 邮箱" prop="email" label-width="120px" style="background-color: white">
+          <el-input v-model="temp.email" placeholder="请输入邮箱" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" />
         </el-form-item>
 
         <el-form-item label="验证码" prop="checkCode" label-width="120px" style="background-color: white">
           <el-input v-model="temp.checkCode" placeholder="请输入验证码" style="width: 108px;height:41px;border:1px solid #000; border-color: #d3dce6;" />
-          <el-button style="width: 88px;height: 37px;margin-left: 3px;margin-top:1px;padding-left: 7px" type="primary" @click="handleCheckCode">
+          <el-button style="width: 88px;height: 37px;margin-left: 3px;margin-top:1px;padding-left: 7px" type="primary" @click="dialogStatus==='register'?handleCheckCode('REGISTER'):handleCheckCode('FORGET_PASSWORD')">
             获取验证码</el-button>
         </el-form-item>
 
@@ -98,7 +102,7 @@
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="createData">
+        <el-button type="primary" @click="dialogStatus==='register'?createData():updateData()">
           确认
         </el-button>
       </div>
@@ -108,19 +112,19 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-import { generateCheckCode, register, editUserInfo } from '@/api/seller/user'
+// import { validUsername } from '@/utils/validate'
+import { generateCheckCode, register, forgetPassword } from '@/api/seller/user'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
+    // const validateUsername = (rule, value, callback) => {
+    //   if (!validUsername(value)) {
+    //     callback(new Error('Please enter the correct user name'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
         callback(new Error('The password can not be less than 6 digits'))
@@ -151,7 +155,6 @@ export default {
         userName: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         password: [{ required: true, message: '密码必填', trigger: 'blur' }],
         surePassword: [{ required: true, message: '确认密码必填', trigger: 'blur' }],
-        mobile: [{ required: true, message: '手机号必填', trigger: 'blur' }],
         checkCode: [{ required: true, message: '验证码必填', trigger: 'blur' }]
       },
       temp: {
@@ -168,13 +171,23 @@ export default {
     }
   },
   methods: {
-    handleCheckCode() {
-      // todo 手机号还没填写 调用400  if(this.temp.mobile )
-      var requestParam = { mobile: this.temp.mobile }
-      generateCheckCode(requestParam).then(() => {
+    handleCheckCode(handleType) {
+      if (this.temp.mobile === undefined && this.temp.email === undefined) {
         this.$notify({
-          title: 'Success',
-          message: 'generateCheckCode Successfully',
+          message: '邮箱和手机号选填一个',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
+      var requestBody = {
+        mobile: this.temp.mobile || '',
+        email: this.temp.email || '',
+        handleType: handleType
+      }
+      generateCheckCode(requestBody).then(() => {
+        this.$notify({
+          message: '已发送验证码，请注意查收！',
           type: 'success',
           duration: 2000
         })
@@ -215,13 +228,30 @@ export default {
       })
     },
     createData() {
-      // 新老密码比较 todo
+      // 新老密码比较
+      if (this.temp.password !== this.temp.surePassword) {
+        this.$notify({
+          message: '两次输入密码不一致',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
+      if (this.temp.mobile === undefined && this.temp.email === undefined) {
+        this.$notify({
+          message: '邮箱和手机号选填一个',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           var requestBody = {
             userName: this.temp.userName,
             password: this.temp.password,
             mobile: this.temp.mobile,
+            email: this.temp.email,
             checkCode: this.temp.checkCode,
             // 头像，只用于后台系统的右上角的头像展示，没必要提供添加和编辑功能，后续用户真有需求，可以完善下
             headPicUrl: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
@@ -231,8 +261,8 @@ export default {
             // this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
+              // title: 'Success',
+              message: '注册成功，请登录',
               type: 'success',
               duration: 2000
             })
@@ -242,7 +272,32 @@ export default {
         }
       })
     },
+    handleForgetPassword() {
+      // this.resetTemp()
+      this.dialogStatus = 'changePassword'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
     handleUpdate(row) {
+      // 新老密码比较
+      if (this.temp.password !== this.temp.surePassword) {
+        this.$notify({
+          message: '两次输入密码不一致',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
+      if (this.temp.mobile === undefined && this.temp.email === undefined) {
+        this.$notify({
+          message: '邮箱和手机号选填一个',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
       this.temp = Object.assign({}, row) // copy obj
       this.dialogStatus = 'changePassword'
       this.dialogFormVisible = true
@@ -254,20 +309,18 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           var requestBody = {
-            userId: this.temp.userId,
-            userName: this.temp.userName,
-            password: this.temp.password,
             mobile: this.temp.mobile,
-            email: this.temp.email
+            email: this.temp.email,
+            password: this.temp.password,
+            checkCode: this.temp.checkCode
           }
-          editUserInfo(requestBody).then(() => {
-            // const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
-            // // 展示框中更新对应记录
-            // this.list.splice(index, 1, this.temp)
-            // this.dialogFormVisible = false
+          forgetPassword(requestBody).then(response => {
+            // 将记录添加到Table中，不再reload页面
+            // this.list.unshift(this.temp)
+            this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
-              message: 'Update Successfully',
+              message: '修改密码成功，请登录',
               type: 'success',
               duration: 2000
             })

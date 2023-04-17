@@ -20,7 +20,7 @@
       border
       fit
       highlight-current-row
-      style="width: 630px;"
+      style="width: 710px;"
       @sort-change="sortChange"
     >
       <el-table-column label="类目ID" prop="id" align="center" width="70px" >
@@ -43,13 +43,16 @@
           <span>{{ row.sortNum }} </span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="170px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="250px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             删除
+          </el-button>
+          <el-button size="mini" type="success" @click="handleCommodity(row)">
+            关联商品
           </el-button>
         </template>
       </el-table-column>
@@ -60,43 +63,43 @@
 
     <!-- :visible.sync，vue标签，设置动态的显示内容与否 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+    <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="类目名称" prop="name" label-width="120px" >
-          <el-input v-model="temp.name" placeholder="请输入类目名称" style="width: 200px;" />
-        </el-form-item>
+      <el-form-item label="类目名称" prop="name" label-width="120px" >
+        <el-input v-model="temp.name" placeholder="请输入类目名称" style="width: 200px;" />
+      </el-form-item>
 
-        <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'">
-          <el-checkbox-group v-model="temp.checkBoxSellerIdList">
-            <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
-              <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
-            </el-checkbox>
-          </el-checkbox-group>
-          <span style="color: green" >功能Tip：可关联多个商家，生成多条类目！</span>
-        </el-form-item>
+      <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'">
+        <el-checkbox-group v-model="temp.checkBoxSellerIdList">
+          <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
+            <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
+          </el-checkbox>
+        </el-checkbox-group>
+        <span style="color: green" >功能Tip：可关联多个商家，生成多条类目！</span>
+      </el-form-item>
 
-        <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'">
-          <el-radio-group v-model="temp.radioSellerId">
-            <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
-              <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
+      <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'">
+        <el-radio-group v-model="temp.radioSellerId">
+          <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
+            <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
+          </el-radio>
+        </el-radio-group>
+      </el-form-item>
 
-        <el-form-item label="* 排序参数" prop="sortNum" label-width="120px">
-          <el-input v-model="temp.sortNum" placeholder="请输入排序参数" style="width: 200px;" />
-        </el-form-item>
+      <el-form-item label="* 排序参数" prop="sortNum" label-width="120px">
+        <el-input v-model="temp.sortNum" placeholder="请输入排序参数" style="width: 200px;" />
+      </el-form-item>
 
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确认
-        </el-button>
-      </div>
-    </el-dialog>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisible = false">
+        取消
+      </el-button>
+      <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        确认
+      </el-button>
+    </div>
+  </el-dialog>
 
   </div>
 </template>
@@ -327,6 +330,9 @@ export default {
         // this.reload()
       })
     },
+    handleCommodity(row, index) {
+
+    }
   }
 }
 </script>

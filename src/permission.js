@@ -52,7 +52,9 @@ router.beforeEach(async(to, from, next) => {
           // 此处报错，会在request.js 79行打印出，此处直接打出来
           console.log('src/permission.js error: ' + error.message)
           // error -> error.message 否则Vue报一堆错
-          Message.error(error.message || 'Has Error')
+          // 此处暂时注释掉，比如token失效后，会弹出后端token返回失效的错误日志后，又弹出Error日志，相当于弹出2个错误提示框，体检较差，
+          // 后续有问题通过日志来跟踪console.log('src/permission.js error: ' + error.message)
+          // Message.error(error.message || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
         }

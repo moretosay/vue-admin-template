@@ -41,7 +41,8 @@
         </span>
       </el-form-item>
 
-      <el-table-column>
+      <!-- [Vue warn]: Error in created hook: "TypeError: parent is undefined" -->
+      <!--<el-table-column >-->
         <el-button
           :loading="loading"
           type="primary"
@@ -60,7 +61,6 @@
           style="width: 143px;margin-bottom:30px;"
           @click.native.prevent="handleForgetPassword"
         >忘记密码</el-button>
-      </el-table-column>
       <!--<div class="tips">-->
       <!--<span style="margin-right:20px;">userName: admin</span>-->
       <!--<span> password: any</span>-->

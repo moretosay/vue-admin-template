@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate" >
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增类目
       </el-button>
     </div>
@@ -18,7 +18,7 @@
       highlight-current-row
       style="width: 710px;"
     >
-      <el-table-column label="类目ID" prop="id" align="center" width="70px" >
+      <el-table-column label="类目ID" prop="id" align="center" width="70px">
         <template slot-scope="{row}">
           <span>{{ row.categoryId }}</span>
         </template>
@@ -59,22 +59,22 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="类目名称" prop="name" label-width="120px" >
+        <el-form-item label="类目名称" prop="name" label-width="120px">
           <el-input v-model="temp.name" placeholder="请输入类目名称" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'">
+        <el-form-item v-if="dialogStatus==='create'" label="关联商家" prop="checkBoxSellerIdList" label-width="120px">
           <el-checkbox-group v-model="temp.checkBoxSellerIdList">
-            <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
+            <el-checkbox v-for="item in sellerList" :key="item.sellerId" :label="item.sellerId">
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
-          <span style="color: green" >功能Tip：可关联多个商家，生成多条类目！</span>
+          <!--<span style="color: green" >功能Tip：可关联多个商家，生成多条类目！</span>-->
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'">
+        <el-form-item v-if="dialogStatus!=='create'" label="关联商家" prop="radioSellerId" label-width="120px">
           <el-radio-group v-model="temp.radioSellerId">
-            <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
+            <el-radio v-for="item in sellerList" :key="item.sellerId" :label="item.sellerId">
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-radio>
           </el-radio-group>
@@ -86,19 +86,19 @@
 
       </el-form>
       <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogFormVisible = false">
-        取消
-      </el-button>
-      <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-        确认
-      </el-button>
-    </div>
+        <el-button @click="dialogFormVisible = false">
+          取消
+        </el-button>
+        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+          确认
+        </el-button>
+      </div>
     </el-dialog>
 
     <!-- 类目商品关系维护 -->
-    <el-dialog :title="ccrTextMap[ccrDialogStatus]" :visible.sync="ccrDialogFormVisible" label-width="800px" >
+    <el-dialog :title="ccrTextMap[ccrDialogStatus]" :visible.sync="ccrDialogFormVisible" label-width="800px">
       <div class="filter-container">
-        <el-button class="filter-item" style="margin-left: 1px;margin-bottom: 8px" type="primary"  @click="ccrHandleCreate" >
+        <el-button class="filter-item" style="margin-left: 1px;margin-bottom: 8px" type="primary" @click="ccrHandleCreate">
           添加商品
         </el-button>
       </div>
@@ -111,17 +111,12 @@
         highlight-current-row
         style="width: 540px;"
       >
-        <!--<el-table-column label="关系ID" prop="categoryCommodityId" align="center" width="70px" >-->
-          <!--<template slot-scope="{row}">-->
-            <!--<span>{{ row.categoryCommodityId }}</span>-->
-          <!--</template>-->
-        <!--</el-table-column>-->
-        <el-table-column label="类目名称" prop="id" align="center" width="110px" >
+        <el-table-column label="类目名称" prop="id" align="center" width="110px">
           <template slot-scope="{row}">
             <span>{{ row.categoryName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="商品名称" prop="id" align="center" width="110px" >
+        <el-table-column label="商品名称" prop="id" align="center" width="110px">
           <template slot-scope="{row}">
             <span>{{ row.commodityName }}</span>
           </template>
@@ -144,29 +139,28 @@
       </el-table>
       <pagination v-show="total>0" :total="total" :page.sync="ccrListQuery.page" :limit.sync="ccrListQuery.limit" @pagination="ccrGetList" />
 
-
     </el-dialog>
 
     <!-- 新增类目商品关系，编辑类目商品关系 -->
     <el-dialog :title="ccr2TextMap[ccr2DialogStatus]" :visible.sync="ccr2DialogFormVisible">
       <el-form ref="ccrDataForm" :rules="ccrRules" :model="ccrTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="* 类目名称" prop="categoryName" label-width="120px" >
+        <el-form-item label="* 类目名称" prop="categoryName" label-width="120px">
           <el-input v-model="ccrTemp.categoryName" placeholder="请输入类目名称" style="width: 200px;" disabled="true" />
         </el-form-item>
 
-        <el-form-item label="关联商品" prop="checkBoxCommodityIdList" label-width="120px" v-if="ccr2DialogStatus==='create'">
+        <el-form-item v-if="ccr2DialogStatus==='create'" label="关联商品" prop="checkBoxCommodityIdList" label-width="120px">
           <el-checkbox-group v-model="ccrTemp.checkBoxCommodityIdList">
-            <el-checkbox :label="item.commodityId" v-for="item in commodityList" :key="item.commodityId">
+            <el-checkbox v-for="item in commodityList" :key="item.commodityId" :label="item.commodityId">
               <span>{{ item.name }} 【商家ID1:{{ item.commodityId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
-          <span style="color: green" >功能Tip：可关联多个商家，生成多条类目！</span>
+          <!--<span style="color: green" >功能Tip：可关联多个商家，生成多个商品！</span>-->
         </el-form-item>
 
-        <el-form-item label="关联商品" prop="radioCommodityId" label-width="120px" v-if="ccr2DialogStatus!=='create'">
+        <el-form-item v-if="ccr2DialogStatus!=='create'" label="关联商品" prop="radioCommodityId" label-width="120px">
           <el-radio-group v-model="ccrTemp.radioCommodityId">
-            <el-radio :label="item.commodityId" v-for="item in commodityList" :key="item.commodityId">
+            <el-radio v-for="item in commodityList" :key="item.commodityId" :label="item.commodityId">
               <span>{{ item.name }} 【商家ID:{{ item.commodityId }}】</span>
             </el-radio>
           </el-radio-group>
@@ -195,10 +189,6 @@ import { findSellerList } from '@/api/seller/seller'
 import { findCommodityList } from '@/api/seller/commodity'
 import { addCategoryList, editCategoryInfo, deleteCategoryInfo, findCategoryList } from '@/api/seller/category'
 import { addCCRList, editCCRInfo, deleteCCRInfo, findCCRList } from '@/api/seller/ccr'
-
-
-
-
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -256,8 +246,7 @@ export default {
         create: '关联商品'
       },
       ccr2DialogFormVisible: false,
-      ccr2DialogStatus: '',
-      // downloadLoading: false
+      ccr2DialogStatus: ''
     }
   },
   created() {
@@ -414,8 +403,8 @@ export default {
         }, 1.5 * 1000)
       })
       // 向下传递类ss目基本信息，便于后续操作
-      this.ccrTemp.categoryId = this.temp.categoryId;
-      this.ccrTemp.categoryName = this.temp.name;
+      this.ccrTemp.categoryId = this.temp.categoryId
+      this.ccrTemp.categoryName = this.temp.name
       // this.ccrResetTemp()
       this.ccrDialogStatus = 'create'
       this.ccrDialogFormVisible = true
@@ -513,9 +502,8 @@ export default {
       })
     },
 
-
     // 类目下添加和编辑商品时，会查出商品列表
-    ccrFindCommodityList(){
+    ccrFindCommodityList() {
       var requestBody = {
         pageNum: 1,
         pageSize: 20// 不可能超过20个商家吧！
@@ -527,8 +515,6 @@ export default {
         }, 1.5 * 1000)
       })
     }
-
-
   }
 }
 </script>

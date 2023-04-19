@@ -230,7 +230,7 @@ export default {
       }
       findSellerList(sellerRequestBody).then(response => {
         // Uncaught (in promise) TypeError: response.data is null
-        if(null != reponse.data){
+        if (response.data != null) {
           this.sellerList = response.data.list
         }
         setTimeout(() => {

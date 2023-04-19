@@ -75,18 +75,18 @@
           <el-input v-model="temp.userName" placeholder="请输入初始密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6" />
         </el-form-item>
 
-        <el-form-item label="密  码" prop="password" label-width="120px" style="background-color: white" >
+        <el-form-item label="密  码" prop="password" label-width="120px" style="background-color: white">
           <el-input v-model="temp.password" placeholder="请输入密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" :type="passwordType2" />
           <span class="show-pwd2" @click="showPwd2">
-          <svg-icon :icon-class="passwordType2 === 'password' ? 'eye' : 'eye-open'" style="margin-left: 10px" />
-        </span>
+            <svg-icon :icon-class="passwordType2 === 'password' ? 'eye' : 'eye-open'" style="margin-left: 10px" />
+          </span>
         </el-form-item>
 
         <el-form-item label="确认密码" prop="surePassword" label-width="120px" style="background-color: white">
           <el-input v-model="temp.surePassword" placeholder="请确认密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" :type="passwordType3" />
           <span class="show-pwd3" @click="showPwd3">
-          <svg-icon :icon-class="passwordType3 === 'password' ? 'eye' : 'eye-open'" style="margin-left: 10px" />
-        </span>
+            <svg-icon :icon-class="passwordType3 === 'password' ? 'eye' : 'eye-open'" style="margin-left: 10px" />
+          </span>
         </el-form-item>
 
         <!-- todo 待接入 -->

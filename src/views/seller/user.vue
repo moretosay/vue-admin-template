@@ -190,8 +190,10 @@ export default {
         userName: this.listQuery.userName
       }
       findUserList(requestBody).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
+        if (response.data != null) {
+          this.list = response.data.list
+          this.total = response.data.total
+        }
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -244,7 +246,9 @@ export default {
         pageSize: 30// 不可能超过20个商家吧！
       }
       findRoleList(roleRequestBody).then(response => {
-        this.roleList = response.data.list
+        if (response.data != null) {
+          this.roleList = response.data.list
+        }
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -280,8 +284,10 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.commonCreateUpdateData()
       this.temp = Object.assign({}, row) // copy obj
+      this.temp.roleCodeList=[],
+      this.temp.sellerIdList=[]
+      this.commonCreateUpdateData()
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {

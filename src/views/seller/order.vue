@@ -211,7 +211,7 @@ export default {
       // 创建sse
       eventSource: null,
       // 模拟登录用户 1681443270209
-      userId: new Date().getTime()
+      userId: store.getters.userId
     }
   },
   // created:在模板渲染成html前调用， mounted:在模板渲染成html后调用
@@ -268,7 +268,7 @@ export default {
         // 浏览器网络：  ns_binding_aborted
         // 原因：是因为fetch中异步提交方式,在请求该链接的时候第一次请求还没有执行完毕，如果又发生了第二次请求的话，
         //     第一个请求就会中断，从而返回NS_BINDING_ABORTED。
-        const userId = store.getters.userId
+        // this.userId = store.getters.userId
         const url = 'http://localhost:5000/sse/connect?userId=' + this.userId
         // this.eventSource = new EventSourcePolyfill(url)
         this.eventSource = new EventSourcePolyfill(url)

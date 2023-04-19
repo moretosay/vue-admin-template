@@ -313,9 +313,9 @@ export default {
     },
     commonCreateData(response) {
       // 将最新sellerId赋值展示
-      // this.temp.sellerId = response.data
-      // this.list.unshift(this.temp)
-      // this.dialogFormVisible = false
+      this.temp.sellerId = response.data
+      this.list.unshift(this.temp)
+      this.dialogFormVisible = false
       // // 上传成功后，将空间释放，不展示文件图标
       // this.fileList = []
       this.$notify({

@@ -63,7 +63,7 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
 
-        const { userId, userName, roleCodeList, headPicUrl } = data
+        const { userId, userName, headPicUrl } = data
 
         // if (!roleCodeList || roleCodeList.length <= 0) {
         //   reject('getInfo: roles must be a non-null array!')

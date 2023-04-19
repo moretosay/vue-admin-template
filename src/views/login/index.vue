@@ -71,23 +71,30 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item v-if="dialogStatus==='register'" label="用户名" prop="userName" label-width="120px" style="background-color: white">
+        <el-form-item label="用户名" prop="userName" label-width="120px" style="background-color: white">
           <el-input v-model="temp.userName" placeholder="请输入初始密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6" />
         </el-form-item>
 
-        <el-form-item label="密  码" prop="password" label-width="120px" style="background-color: white">
-          <el-input v-model="temp.password" placeholder="请输入密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" />
+        <el-form-item label="密  码" prop="password" label-width="120px" style="background-color: white" >
+          <el-input v-model="temp.password" placeholder="请输入密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" :type="passwordType2" />
+          <span class="show-pwd2" @click="showPwd2">
+          <svg-icon :icon-class="passwordType2 === 'password' ? 'eye' : 'eye-open'" style="margin-left: 10px" />
+        </span>
         </el-form-item>
 
         <el-form-item label="确认密码" prop="surePassword" label-width="120px" style="background-color: white">
-          <el-input v-model="temp.surePassword" placeholder="请确认密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" />
+          <el-input v-model="temp.surePassword" placeholder="请确认密码" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" :type="passwordType3" />
+          <span class="show-pwd3" @click="showPwd3">
+          <svg-icon :icon-class="passwordType3 === 'password' ? 'eye' : 'eye-open'" style="margin-left: 10px" />
+        </span>
         </el-form-item>
 
-        <el-form-item label="* 手机号" prop="mobile" label-width="120px" style="background-color: white">
-          <el-input v-model="temp.mobile" placeholder="请输入手机号" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" />
-        </el-form-item>
+        <!-- todo 待接入 -->
+        <!--<el-form-item label="* 手机号" prop="mobile" label-width="120px" style="background-color: white">-->
+        <!--<el-input v-model="temp.mobile" placeholder="请输入手机号" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" />-->
+        <!--</el-form-item>-->
 
-        <el-form-item label="* 邮箱" prop="email" label-width="120px" style="background-color: white">
+        <el-form-item label="邮箱" prop="email" label-width="120px" style="background-color: white">
           <el-input v-model="temp.email" placeholder="请输入邮箱" style="width: 200px;height:41px;border:1px solid #000; border-color: #d3dce6;" />
         </el-form-item>
 
@@ -144,6 +151,8 @@ export default {
       },
       loading: false,
       passwordType: 'password',
+      passwordType2: 'password',
+      passwordType3: 'password',
       redirect: undefined,
       dialogFormVisible: false,
       dialogStatus: '',
@@ -155,6 +164,7 @@ export default {
         userName: [{ required: true, message: '用户名必填', trigger: 'blur' }],
         password: [{ required: true, message: '密码必填', trigger: 'blur' }],
         surePassword: [{ required: true, message: '确认密码必填', trigger: 'blur' }],
+        email: [{ required: true, message: '邮箱必填', trigger: 'blur' }],
         checkCode: [{ required: true, message: '验证码必填', trigger: 'blur' }]
       },
       temp: {
@@ -188,7 +198,7 @@ export default {
       generateCheckCode(requestBody).then(() => {
         this.$notify({
           // message: '已发送验证码，请注意查收！',
-          message: '短信验证还未接入，请用邮箱查收验证！',
+          message: '请用邮箱验证【短信验证未接入】',
           type: 'success',
           duration: 2000
         })
@@ -199,6 +209,26 @@ export default {
         this.passwordType = ''
       } else {
         this.passwordType = 'password'
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus()
+      })
+    },
+    showPwd2() {
+      if (this.passwordType2 === 'password') {
+        this.passwordType2 = ''
+      } else {
+        this.passwordType2 = 'password'
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus()
+      })
+    },
+    showPwd3() {
+      if (this.passwordType3 === 'password') {
+        this.passwordType3 = ''
+      } else {
+        this.passwordType3 = 'password'
       }
       this.$nextTick(() => {
         this.$refs.password.focus()
@@ -310,6 +340,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           var requestBody = {
+            userName: this.temp.userName,
             mobile: this.temp.mobile,
             email: this.temp.email,
             password: this.temp.password,

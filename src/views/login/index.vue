@@ -311,7 +311,7 @@ export default {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    handleUpdate(row) {
+    updateData() {
       // 新老密码比较
       if (this.temp.password !== this.temp.surePassword) {
         this.$notify({
@@ -329,14 +329,6 @@ export default {
         })
         return
       }
-      this.temp = Object.assign({}, row) // copy obj
-      this.dialogStatus = 'changePassword'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           var requestBody = {

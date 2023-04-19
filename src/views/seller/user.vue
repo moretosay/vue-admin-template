@@ -172,8 +172,8 @@ export default {
         create: '新增用户'
       },
       rules: {
-        userName: [{ required: true, message: '用户名必填', trigger: 'blur' }],
-        password: [{ required: true, message: '初始密码必填', trigger: 'blur' }]
+        userName: [{ required: true, message: '用户名必填', trigger: 'blur' }]
+        // password: [{ required: true, message: '初始密码必填', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -229,7 +229,10 @@ export default {
         pageSize: 30// 不可能超过20个商家吧！
       }
       findSellerList(sellerRequestBody).then(response => {
-        this.sellerList = response.data.list
+        // Uncaught (in promise) TypeError: response.data is null
+        if(null != reponse.data){
+          this.sellerList = response.data.list
+        }
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -291,7 +294,8 @@ export default {
           var requestBody = {
             userId: this.temp.userId,
             userName: this.temp.userName,
-            password: this.temp.password,
+            // 此处不更新密码，为啥，因为
+            // password: this.temp.password,
             mobile: this.temp.mobile,
             email: this.temp.email,
             introduction: this.temp.introduction,

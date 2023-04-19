@@ -187,7 +187,8 @@ export default {
       }
       generateCheckCode(requestBody).then(() => {
         this.$notify({
-          message: '已发送验证码，请注意查收！',
+          // message: '已发送验证码，请注意查收！',
+          message: '短信验证还未接入，请用邮箱查收验证！',
           type: 'success',
           duration: 2000
         })

@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate" >
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增商家
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
@@ -23,21 +23,21 @@
       style="width: 1155px;"
       @sort-change="sortChange"
     >
-      <el-table-column label="商家ID" align="center" width="70px" >
+      <el-table-column label="商家ID" align="center" width="70px">
         <template slot-scope="{row}">
           <span>{{ row.sellerId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家名称" width="110px" align="center" >
+      <el-table-column label="商家名称" width="110px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Logo" prop="logoPicUrl" width="100px" align="center" >
+      <el-table-column label="Logo" prop="logoPicUrl" width="100px" align="center">
         <!--scope相当于一行的数据， scope.row相当于当前行的数据对象-->
         <template slot-scope="scope">
-          <el-avatar shape="square" :size="60" :src="scope.row.logoPicUrl" v-if="scope.row.logoPicUrl != null" ></el-avatar>
-          <span v-if="scope.row.logoPicUrl == null" > 待上传</span>
+          <el-avatar v-if="scope.row.logoPicUrl != null" shape="square" :size="60" :src="scope.row.logoPicUrl" />
+          <span v-if="scope.row.logoPicUrl == null"> 待上传</span>
         </template>
       </el-table-column>
       <el-table-column label="商家简介" width="150px" align="center">
@@ -97,11 +97,11 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="商家名称" prop="name" label-width="120px" >
+        <el-form-item label="商家名称" prop="name" label-width="120px">
           <el-input v-model="temp.name" placeholder="请输入商家名称" style="width: 200px;" />
         </el-form-item>
-        <el-form-item label="商家简介" prop = "summary" label-width="120px">
-          <el-input v-model="temp.summary" class="summary" placeholder="请输入商家简介" style="width: 200px;"/>
+        <el-form-item label="商家简介" prop="summary" label-width="120px">
+          <el-input v-model="temp.summary" class="summary" placeholder="请输入商家简介" style="width: 200px;" />
         </el-form-item>
 
         <el-form-item label="营业开始时间" prop="businessStartTime" label-width="120px">
@@ -117,21 +117,22 @@
         </el-form-item>
 
         <el-form-item label="最小起送费" prop="minAmount" label-width="120px">
-          <el-input v-model="temp.minAmount" class="minAmount" placeholder="请输入最小起送费" style="width: 200px;"/> 元
+          <el-input v-model="temp.minAmount" class="minAmount" placeholder="请输入最小起送费" style="width: 200px;" /> 元
         </el-form-item>
         <el-form-item label="# 配送费" prop="expressFee" label-width="120px" align="left">
-          <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;"/> 元
+          <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;" /> 元
         </el-form-item>
 
-        <el-form-item label="# Logo图片" prop="logoPicUrl" label-width="120px" >
+        <el-form-item label="# Logo图片" prop="logoPicUrl" label-width="120px">
           <el-upload
-           ref="upfile"
-           style="display: inline"
-           :auto-upload="false"
-           :on-change="handleChange"
-           :file-list="fileList"
-           :limit="1"
-           action="#">
+            ref="upfile"
+            style="display: inline"
+            :auto-upload="false"
+            :on-change="handleChange"
+            :file-list="fileList"
+            :limit="1"
+            action="#"
+          >
             <el-button type="primary" size="small">
               上传
             </el-button>
@@ -231,8 +232,10 @@ export default {
         name: this.listQuery.name
       }
       findSellerList(requestBody).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
+        if (response.data != null) {
+          this.list = response.data.list
+          this.total = response.data.total
+        }
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)

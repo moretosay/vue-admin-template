@@ -137,8 +137,8 @@
           </template>
         </el-table-column>
       </el-table>
-      <pagination v-show="total>0" :total="total" :page.sync="ccrListQuery.page" :limit.sync="ccrListQuery.limit" @pagination="ccrGetList" />
-
+      <!--@pagination="ccrGetList"-->
+      <pagination v-show="total>0" :total="total" :page.sync="ccrListQuery.page" :limit.sync="ccrListQuery.limit" />
     </el-dialog>
 
     <!-- 新增类目商品关系，编辑类目商品关系 -->
@@ -261,8 +261,10 @@ export default {
         name: this.listQuery.name
       }
       findCategoryList(requestBody).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
+        if (response.data != null) {
+          this.list = response.data.list
+          this.total = response.data.total
+        }
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)

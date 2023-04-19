@@ -5,12 +5,9 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate" >
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增商品
       </el-button>
-      <!--<el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">-->
-      <!--导出-->
-      <!--</el-button>-->
     </div>
 
     <el-table
@@ -23,7 +20,7 @@
       style="width: 940px;"
       @sort-change="sortChange"
     >
-      <el-table-column label="商品ID" prop="id" align="center" width="70px" >
+      <el-table-column label="商品ID" prop="id" align="center" width="70px">
         <template slot-scope="{row}">
           <span>{{ row.commodityId }}</span>
         </template>
@@ -33,11 +30,11 @@
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="主图" prop="mainUrl" width="100px" align="center" >
+      <el-table-column label="主图" prop="mainUrl" width="100px" align="center">
         <!--scope相当于一行的数据， scope.row相当于当前行的数据对象-->
         <template slot-scope="scope">
-          <el-avatar shape="square" :size="60" :src="scope.row.mainUrl" v-if="scope.row.mainUrl != null" ></el-avatar>
-          <span v-if="scope.row.mainUrl == null" > 待上传</span>
+          <el-avatar v-if="scope.row.mainUrl != null" shape="square" :size="60" :src="scope.row.mainUrl" />
+          <span v-if="scope.row.mainUrl == null"> 待上传</span>
         </template>
       </el-table-column>
       <el-table-column label="商品简介" width="130px" align="center">
@@ -79,36 +76,36 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
-        <el-form-item label="商品名称" prop="name" label-width="120px" >
+        <el-form-item label="商品名称" prop="name" label-width="120px">
           <el-input v-model="temp.name" placeholder="请输入商品名称" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="* 商品简介" prop="summary" label-width="120px" >
+        <el-form-item label="* 商品简介" prop="summary" label-width="120px">
           <el-input v-model="temp.summary" placeholder="请输入商品简介" style="width: 200px;" />
         </el-form-item>
 
-        <el-form-item label="商品价格" prop="price" label-width="120px" >
+        <el-form-item label="商品价格" prop="price" label-width="120px">
           <el-input v-model="temp.price" placeholder="请输入商品价格" style="width: 200px;" /> 元
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="checkBoxSellerIdList" label-width="120px" v-if="dialogStatus==='create'">
+        <el-form-item v-if="dialogStatus==='create'" label="关联商家" prop="checkBoxSellerIdList" label-width="120px">
           <el-checkbox-group v-model="temp.checkBoxSellerIdList">
-            <el-checkbox :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
+            <el-checkbox v-for="item in sellerList" :key="item.sellerId" :label="item.sellerId">
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
-          <span style="color: green" >功能Tip：可关联多个商家，生成多个商品！</span>
+          <span style="color: green">功能Tip：可关联多个商家，生成多个商品！</span>
         </el-form-item>
 
-        <el-form-item label="关联商家" prop="radioSellerId" label-width="120px" v-if="dialogStatus!=='create'">
+        <el-form-item v-if="dialogStatus!=='create'" label="关联商家" prop="radioSellerId" label-width="120px">
           <el-radio-group v-model="temp.radioSellerId">
-            <el-radio :label="item.sellerId" v-for="item in sellerList" :key="item.sellerId">
+            <el-radio v-for="item in sellerList" :key="item.sellerId" :label="item.sellerId">
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="* 商品主图" prop="mainUrl" label-width="120px" >
+        <el-form-item label="* 商品主图" prop="mainUrl" label-width="120px">
           <el-upload
             ref="upfile"
             style="display: inline"
@@ -116,7 +113,8 @@
             :on-change="handleChange"
             :file-list="fileList"
             :limit="1"
-            action="#">
+            action="#"
+          >
             <el-button type="primary" size="small">
               上传
             </el-button>
@@ -222,8 +220,10 @@ export default {
         name: this.listQuery.name
       }
       findCommodityList(requestBody).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
+        if (response.data != null) {
+          this.list = response.data.list
+          this.total = response.data.total
+        }
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)

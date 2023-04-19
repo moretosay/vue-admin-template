@@ -153,6 +153,7 @@ import { editOrderInfo, deleteOrderInfo, findOrderList } from '@/api/seller/orde
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import { EventSourcePolyfill } from 'event-source-polyfill' // npm install --save event-source-polyfill
+import store from '@/store'
 
 export default {
   inject: ['reload'],
@@ -248,8 +249,10 @@ export default {
         remark: this.listQuery.remark
       }
       findOrderList(requestBody).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
+        if (response.data != null) {
+          this.list = response.data.list
+          this.total = response.data.total
+        }
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
@@ -259,9 +262,14 @@ export default {
       if (window.EventSource) {
         // 根据环境的不同，变更url
         // const url = process.env.VUE_APP_MSG_SERVER_URL
-        // 用户userId
-        // const { userId } = this.$store.state.user
-        const url = 'http://localhost:5000/sse/connect/' + this.userId
+
+        // todo
+        // 浏览器控制台：TypeError: NetworkError when attempting to fetch resource.
+        // 浏览器网络：  ns_binding_aborted
+        // 原因：是因为fetch中异步提交方式,在请求该链接的时候第一次请求还没有执行完毕，如果又发生了第二次请求的话，
+        //     第一个请求就会中断，从而返回NS_BINDING_ABORTED。
+        const userId = store.getters.userId
+        const url = 'http://localhost:5000/sse/connect?userId=' + this.userId
         // this.eventSource = new EventSourcePolyfill(url)
         this.eventSource = new EventSourcePolyfill(url)
         // , {

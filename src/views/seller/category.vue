@@ -321,7 +321,7 @@ export default {
     handleUpdate(row) {
       this.getSellerList('update')
       // 编辑时，回显已有数据
-      this.temp = Object.assign({}, row) // copy obj
+      this.temp = Object.assign({}, row)
       this.$set(this.temp, 'radioSellerId', this.temp.sellerId)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -339,7 +339,7 @@ export default {
             sortNum: this.temp.sortNum
           }
           editCategoryInfo(requestBody).then(() => {
-            const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
+            const index = this.list.findIndex(v => v.categoryId === this.temp.categoryId)
             // 展示框中更新对应记录
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false

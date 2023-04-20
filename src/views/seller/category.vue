@@ -2,16 +2,15 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="类目名称关键字" style="width: 130px; height: 50px" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增类目
       </el-button>
     </div>
 
     <el-table
-      v-loading="listLoading"
       :data="list"
       border
       fit
@@ -52,7 +51,7 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- v-show：数据>0显示 page：第几页，对应后端pageNum，limit：每页记录数，对应后端pageSize -->
+
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <!-- 新增类目，编辑类目 -->
@@ -69,7 +68,6 @@
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
-          <!--<span style="color: green" >功能Tip：可关联多个商家，生成多条类目！</span>-->
         </el-form-item>
 
         <el-form-item v-if="dialogStatus!=='create'" label="关联商家" prop="radioSellerId" label-width="120px">
@@ -98,18 +96,17 @@
     <!-- 类目商品关系维护 -->
     <el-dialog :title="ccrTextMap[ccrDialogStatus]" :visible.sync="ccrDialogFormVisible" label-width="800px">
       <div class="filter-container">
-        <el-button class="filter-item" style="margin-left: 1px;margin-bottom: 8px" type="primary" @click="ccrHandleCreate">
-          添加商品
+        <el-button class="filter-item" style="margin-left: 1px;margin-bottom: 8px; height: 38px;" type="primary" @click="ccrHandleCreate">
+          添加关系
         </el-button>
       </div>
 
       <el-table
-        v-loading="ccrListLoading"
         :data="ccrList"
         border
         fit
         highlight-current-row
-        style="width: 540px;"
+        style="width: 470px;"
       >
         <el-table-column label="类目名称" prop="id" align="center" width="110px">
           <template slot-scope="{row}">
@@ -146,7 +143,7 @@
       <el-form ref="ccrDataForm" :rules="ccrRules" :model="ccrTemp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
         <el-form-item label="* 类目名称" prop="categoryName" label-width="120px">
-          <el-input v-model="ccrTemp.categoryName" placeholder="请输入类目名称" style="width: 200px;" disabled="true" />
+          <el-input v-model="ccrTemp.categoryName" placeholder="请输入类目名称" style="width: 200px;" :disabled="true" />
         </el-form-item>
 
         <el-form-item v-if="ccr2DialogStatus==='create'" label="关联商品" prop="checkBoxCommodityIdList" label-width="120px">
@@ -201,10 +198,10 @@ export default {
     return {
       list: null,
       total: 0,
-      listLoading: true,
+      // listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 20
       },
       textMap: {
         update: '编辑类目',
@@ -223,13 +220,13 @@ export default {
 
       ccrList: null,
       ccrTotal: 0,
-      ccrListLoading: true,
+      // ccrListLoading: true,
       ccrListQuery: {
         page: 1,
-        limit: 10
+        limit: 20
       },
       ccrTextMap: {
-        create: '类目所属商品维护'
+        create: '类目商品关系维护'
       },
       ccrDialogFormVisible: false,
       ccrDialogStatus: '',
@@ -254,7 +251,6 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
       var requestBody = {
         pageNum: this.listQuery.page,
         pageSize: this.listQuery.limit,
@@ -266,33 +262,26 @@ export default {
           this.total = response.data.total
         }
         setTimeout(() => {
-          this.listLoading = false
         }, 1.5 * 1000)
       })
     },
     handleFilter() {
-      this.listQuery.page = 1
       this.getList()
     },
-    resetTemp() {
-      this.temp = {
-        checkBoxSellerIdList: []
-      }
-    },
-    handleCreate() {
-      // 新增类目时，查询当前用户下的商家，后续进行权限控制  todo
-      // this.sellerList = this.list
+    getSellerList(){
       var requestBody = {
         pageNum: 1,
-        pageSize: 20// 不可能超过20个商家吧！
+        pageSize: 10 // 大概率不会超过10个商家
       }
       findSellerList(requestBody).then(response => {
         this.sellerList = response.data.list
         setTimeout(() => {
-          this.listLoading = false
         }, 1.5 * 1000)
       })
-      this.resetTemp()
+    },
+    handleCreate() {
+      this.getSellerList()
+      this.$set(this.temp, 'checkBoxSellerIdList', [])
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -308,42 +297,22 @@ export default {
             sortNum: this.temp.sortNum
           }
           addCategoryList(requestBody).then(response => {
-            // 批量新增不将多条类目新增到原表中，还是考虑刷新页面
-            // this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
+              message: '新增类目成功',
               type: 'success',
               duration: 2000
             })
-            // 通过子组件inject和调用this.reload，APP组件定义this.reload，和router-view的isRouterAlive等来控制
             this.reload()
           })
         }
       })
     },
     handleUpdate(row) {
-      // 编辑类目时，查询当前用户下的商家，后续进行权限控制  todo
-      // this.sellerList = this.list
-      var requestBody = {
-        pageNum: 1,
-        pageSize: 20// 不可能超过20个商家吧！
-      }
-      findSellerList(requestBody).then(response => {
-        this.sellerList = response.data.list
-        // this.total = response.data.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-      // todo
+      this.getSellerList()
+      // 编辑时，回显已有数据
       this.temp = Object.assign({}, row) // copy obj
-      // 此种方式赋值，radioSellerId对应的组件不可修改
-      // this.temp.radioSellerId = this.temp.sellerId
-      // radioSellerId对应的组件可修改
       this.$set(this.temp, 'radioSellerId', this.temp.sellerId)
-      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -360,17 +329,15 @@ export default {
             sortNum: this.temp.sortNum
           }
           editCategoryInfo(requestBody).then(() => {
-            // const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
-            // // 展示框中更新对应记录
-            // this.list.splice(index, 1, this.temp)
-            // this.dialogFormVisible = false
+            const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
+            // 展示框中更新对应记录
+            this.list.splice(index, 1, this.temp)
+            this.dialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
+              message: '编辑类目成功',
               type: 'success',
               duration: 2000
             })
-            this.reload()
           })
         }
       })
@@ -380,45 +347,58 @@ export default {
       var requestParam = { categoryId: this.temp.categoryId }
       deleteCategoryInfo(requestParam).then(() => {
         this.$notify({
-          title: 'Success',
-          message: 'Delete Successfully',
+          message: '删除类目成功',
           type: 'success',
           duration: 2000
         })
         // // 展示框中删除对应记录
         this.list.splice(index, 1)
-        // this.reload()
       })
     },
 
     handleCommodity(row) {
-      this.temp = Object.assign({}, row) // copy obj
+      this.temp = Object.assign({}, row)
       var requestBody = {
         pageNum: 1,
-        pageSize: 20, // 不可能超过20个商家吧！
+        pageSize: 30,  // 不可能超过30个商品吧
         categoryId: this.temp.categoryId
       }
       findCCRList(requestBody).then(response => {
         this.ccrList = response.data.list
         setTimeout(() => {
-          this.ccrListLoading = false
         }, 1.5 * 1000)
       })
       // 向下传递类ss目基本信息，便于后续操作
       this.ccrTemp.categoryId = this.temp.categoryId
       this.ccrTemp.categoryName = this.temp.name
-      // this.ccrResetTemp()
       this.ccrDialogStatus = 'create'
       this.ccrDialogFormVisible = true
       this.$nextTick(() => {
-        // this.$refs['ccrDataForm'].clearValidate()
       })
     },
-
+    ccrFindCommodityList() {
+      var requestBody = {
+        pageNum: 1,
+        pageSize: 20// 不可能超过20个商家吧！
+      }
+      findCommodityList(requestBody).then(response => {
+        this.commodityList = response.data.list
+        setTimeout(() => {
+        }, 1.5 * 1000)
+      })
+    },
     ccrHandleCreate() {
       this.ccrFindCommodityList()
+      if (this.commodityList.length === 0) {
+        this.$notify({
+          message: '请先添加商品【移步商品管理】',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
       // 初始化ccrTemp.checkBoxCommodityIdList，否则此标签不展示
-      this.ccrTemp.checkBoxCommodityIdList = []
+      this.$set(this.ccrTemp, 'checkBoxCommodityIdList', [])
       this.ccr2DialogStatus = 'create'
       this.ccr2DialogFormVisible = true
       this.$nextTick(() => {
@@ -434,29 +414,21 @@ export default {
             sortNum: this.ccrTemp.sortNum
           }
           addCCRList(requestBody).then(response => {
-            // 批量新增不将多条类目新增到原表中，还是考虑刷新页面
-            // this.list.unshift(this.temp)
             this.ccr2DialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
+              message: '添加关系成功',
               type: 'success',
               duration: 2000
             })
-            // 通过子组件inject和调用this.reload，APP组件定义this.reload，和router-view的isRouterAlive等来控制
             this.reload()
           })
         }
       })
     },
-
     ccrHandleUpdate(row) {
-      this.ccrTemp = Object.assign({}, row) // copy obj
       this.ccrFindCommodityList()
-      // todo
-      this.ccrTemp = Object.assign({}, row) // copy obj
+      this.ccrTemp = Object.assign({}, row)
       this.$set(this.ccrTemp, 'radioCommodityId', this.ccrTemp.commodityId)
-      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.ccr2DialogStatus = 'update'
       this.ccr2DialogFormVisible = true
       this.$nextTick(() => {
@@ -474,22 +446,19 @@ export default {
           }
           editCCRInfo(requestBody).then(() => {
             const index = this.ccrList.findIndex(v => v.categoryCommodityId === this.ccrTemp.categoryCommodityId)
-            // // 展示框中更新对应记录
             this.ccrList.splice(index, 1, this.ccrTemp)
             this.ccr2DialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
+              message: '编辑关系成功',
               type: 'success',
               duration: 2000
             })
-            // this.reload()
           })
         }
       })
     },
     ccrHandleDelete(row, index) {
-      this.ccrTemp = Object.assign({}, row) // copy obj
+      this.ccrTemp = Object.assign({}, row)
       var requestParam = { categoryCommodityId: this.ccrTemp.categoryCommodityId }
       deleteCCRInfo(requestParam).then(() => {
         this.$notify({
@@ -498,25 +467,10 @@ export default {
           type: 'success',
           duration: 2000
         })
-        // // 展示框中删除对应记录
         this.ccrList.splice(index, 1)
-        // this.reload()
-      })
-    },
-
-    // 类目下添加和编辑商品时，会查出商品列表
-    ccrFindCommodityList() {
-      var requestBody = {
-        pageNum: 1,
-        pageSize: 20// 不可能超过20个商家吧！
-      }
-      findCommodityList(requestBody).then(response => {
-        this.commodityList = response.data.list
-        setTimeout(() => {
-          this.ccrListLoading = false
-        }, 1.5 * 1000)
       })
     }
+
   }
 }
 </script>

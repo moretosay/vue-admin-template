@@ -1,7 +1,7 @@
 <template>
   <!--<div class="dashboard-container">-->
-    <!--<div class="dashboard-text">name: {{ name }}</div>-->
-    <img src='http://localhost:5000/file/image/index.jpg' width="100%">
+  <!--<div class="dashboard-text">name: {{ name }}</div>-->
+  <img :src="imgUrl" width="100%">
   <!--</div>-->
 </template>
 
@@ -14,6 +14,11 @@ export default {
     ...mapGetters([
       'name'
     ])
+  },
+  data() {
+    return {
+      imgUrl: process.env.VUE_APP_BASE_URL + '/file/image/index.jpg'
+    }
   }
 }
 </script>

@@ -236,7 +236,7 @@ export default {
         // 原因：是因为fetch中异步提交方式,在请求该链接的时候第一次请求还没有执行完毕，如果又发生了第二次请求的话，
         //     第一个请求就会中断，从而返回NS_BINDING_ABORTED。
         // this.userId = store.getters.userId
-        const url = 'http://localhost:5000/sse/connect?userId=' + this.userId
+        const url = process.env.VUE_APP_BASE_URL + '/sse/connect?userId=' + this.userId
         // this.eventSource = new EventSourcePolyfill(url)
         this.eventSource = new EventSourcePolyfill(url)
         this.eventSource.onopen = (e) => {

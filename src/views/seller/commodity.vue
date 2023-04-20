@@ -2,17 +2,16 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="商品名称关键字" style="width: 130px; height: 50px" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增商品
       </el-button>
     </div>
 
     <el-table
       :key="tableKey"
-      v-loading="listLoading"
       :data="list"
       border
       fit
@@ -30,7 +29,6 @@
         </template>
       </el-table-column>
       <el-table-column label="主图" prop="mainUrl" width="100px" align="center">
-        <!--scope相当于一行的数据， scope.row相当于当前行的数据对象-->
         <template slot-scope="scope">
           <el-avatar v-if="scope.row.mainUrl != null" shape="square" :size="60" :src="scope.row.mainUrl" />
           <span v-if="scope.row.mainUrl == null"> 待上传</span>
@@ -68,10 +66,8 @@
       </el-table-column>
     </el-table>
 
-    <!-- v-show：数据>0显示 page：第几页，对应后端pageNum，limit：每页记录数，对应后端pageSize -->
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <!-- :visible.sync，vue标签，设置动态的显示内容与否 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
 
@@ -93,7 +89,6 @@
               <span>{{ item.name }} 【商家ID:{{ item.sellerId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
-          <span style="color: green">功能Tip：可关联多个商家，生成多个商品！</span>
         </el-form-item>
 
         <el-form-item v-if="dialogStatus!=='create'" label="关联商家" prop="radioSellerId" label-width="120px">
@@ -139,54 +134,29 @@
 </template>
 
 <script>
-import { addCommodityList, addCommodityListContainPic, editCommodityInfo, editCommodityInfoContainPic, deleteCommodityInfo, findCommodityList } from '@/api/seller/commodity'
+import { addCommodityList, addCommodityListContainPic, editCommodityInfo,
+  editCommodityInfoContainPic, deleteCommodityInfo, findCommodityList } from '@/api/seller/commodity'
 import { findSellerList } from '@/api/seller/seller'
 
-import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import waves from '@/directive/waves'
+import Pagination from '@/components/Pagination'
 
 export default {
   inject: ['reload'],
   name: 'Commodity',
   components: { Pagination },
   directives: { waves },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   data() {
     return {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        limit: 10
       },
-      // calendarTypeOptions,
-      // sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      // statusOptions: ['published', 'draft', 'deleted'],
-      // showReviewer: false,
-      // categoryList: [],
       sellerList: [],
       temp: {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published'
       },
       fileList: [],
       dialogFormVisible: false,
@@ -195,15 +165,12 @@ export default {
         update: '编辑商品',
         create: '新增商品'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         name: [{ required: true, message: '商品名称必填', trigger: 'blur' }],
         price: [{ required: true, message: '商品价格必填', trigger: 'blur' }],
         checkBoxSellerIdList: [{ required: true, message: '商家必选', trigger: 'change' }],
         radioSellerId: [{ required: true, message: '商家必选', trigger: 'change' }]
-      },
-      downloadLoading: false
+      }
     }
   },
   created() {
@@ -211,7 +178,6 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
       var requestBody = {
         pageNum: this.listQuery.page,
         pageSize: this.listQuery.limit,
@@ -223,52 +189,38 @@ export default {
           this.total = response.data.total
         }
         setTimeout(() => {
-          this.listLoading = false
         }, 1.5 * 1000)
       })
     },
     handleFilter() {
-      this.listQuery.page = 1
       this.getList()
     },
-    resetTemp() {
-      this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: '',
-        checkBoxSellerIdList: []
-      }
-    },
-    handleChange(file, fileList) {
-      this.fileList = fileList
-    },
-    handleCreate() {
-      // 新增商品时，查询当前用户下的类目，后续进行权限控制  todo
-      // this.categoryList = this.list
+    findSellerList(){
       var requestBody = {
         pageNum: 1,
         pageSize: 20// 不可能超过20个商家吧！
       }
       findSellerList(requestBody).then(response => {
-        this.sellerList = response.data.list
-        console.log('888888' + JSON.stringify(this.sellerList))
-        // this.total = response.data.total
+        if (response.data != null) {
+          this.sellerList = response.data.list
+          this.total = response.data.total
+        }
         setTimeout(() => {
-          this.listLoading = false
         }, 1.5 * 1000)
       })
-      this.resetTemp()
+    },
+    handleChange(file, fileList) {
+      this.fileList = fileList
+    },
+    handleCreate() {
+      this.findSellerList()
+      this.$set(this.temp, 'checkBoxSellerIdList', [])
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    // 通过onchanne触发方法获得文件列表
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -303,38 +255,19 @@ export default {
       })
     },
     commonCreateData(response) {
-      // 单条新增角色，把角色手动添加到table中，不用reload刷，体验和性能赶不上这个
-      this.list.unshift(this.temp)
-      this.dialogFormVisible = true
+      this.dialogFormVisible = false
       this.$notify({
-        title: '新增商品成功',
         message: '新增商品成功',
         type: 'success',
         duration: 2000
       })
-      // this.reload()
+      this.reload()
     },
     handleUpdate(row) {
-      // 编辑类目时，查询当前用户下的商家，后续进行权限控制  todo
-      // this.categoryList = this.list
-      var requestBody = {
-        pageNum: 1,
-        pageSize: 20// 不可能超过20个商家吧！
-      }
-      findSellerList(requestBody).then(response => {
-        this.sellerList = response.data.list
-        // this.total = response.data.total
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-      // todo
+      this.findSellerList()
       this.temp = Object.assign({}, row) // copy obj
-      // 此种方式赋值，radioSellerId 对应的组件不可修改
-      // this.temp.radioSellerId = this.temp.sellerId
-      // radioSellerId 对应的组件可修改
+      // this.temp.radioSellerId = this.temp.sellerId，此种方式赋值，radioSellerId对应的组件不可修改
       this.$set(this.temp, 'radioSellerId', this.temp.sellerId)
-      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -376,27 +309,25 @@ export default {
       })
     },
     commonUpdateData() {
+      const index = this.list.findIndex(v => v.commodityId === this.temp.commodityId)
+      this.list.splice(index, 1, this.temp)
+      this.dialogFormVisible = false
       this.$notify({
-        title: 'Success',
-        message: 'Update Successfully',
+        message: '编辑商品成功',
         type: 'success',
         duration: 2000
       })
-      this.reload()
     },
     handleDelete(row, index) {
-      this.temp = Object.assign({}, row) // copy obj
+      this.temp = Object.assign({}, row)
       var requestParam = { commodityId: this.temp.commodityId }
       deleteCommodityInfo(requestParam).then(() => {
         this.$notify({
-          title: 'Success',
-          message: 'Delete Successfully',
+          message: '删除商品成功',
           type: 'success',
           duration: 2000
         })
-        // // 展示框中删除对应记录
         this.list.splice(index, 1)
-        // this.reload()
       })
     }
   }

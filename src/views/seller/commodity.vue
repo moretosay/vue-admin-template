@@ -208,7 +208,7 @@ export default {
         }, 1.5 * 1000)
         if (handleType === 'create' && this.sellerList.length === 0) {
           this.$notify({
-            message: '请先添加商家【移步商家管理】',
+            message: '请在商家管理中添加商家',
             type: 'error',
             duration: 2000
           })

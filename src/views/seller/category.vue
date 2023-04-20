@@ -32,7 +32,7 @@
           <span>{{ row.sellerName }} 【商家ID:{{ row.sellerId }}】</span>
         </template>
       </el-table-column>
-      <el-table-column label="排序参数" width="80px" align="left" header-align="center">
+      <el-table-column label="排序参数" width="80px" align="center">
         <template slot-scope="{row}" style="align-content: left">
           <span>{{ row.sortNum }} </span>
         </template>

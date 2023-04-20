@@ -12,21 +12,18 @@
       <el-input
         v-model="listQuery.remark"
         placeholder="备注关键字"
-        style="width: 100px; height: 50px"
+        style="width: 100px; height: 50px;margin-left: 5px;"
         class="filter-item"
         @keyup.enter.native="handleFilter"
       />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" style="margin-left: 5px;" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <!--<el-table-column label="商品ID" align="center" width="70px" >-->
       <span style="color: green">{{ listQuery.message }}</span>
-      <!--</el-table-column>-->
     </div>
 
     <el-table
       :key="tableKey"
-      v-loading="listLoading"
       :data="list"
       border
       fit
@@ -93,7 +90,7 @@
           <el-button type="primary" size="mini" @click="handleDetail(row)">
             商品详情
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="row.status!='deleted'" size="mini" type="danger" :disabled="true" @click="handleDelete(row,$index)">
             删除
           </el-button>
           <el-button v-if="row.status=='TO_RECEIVE'" size="mini" type="success" @click="handleModifyStatus(row,'TO_ARRIVE')">
@@ -106,15 +103,12 @@
       </el-table-column>
     </el-table>
 
-    <!-- v-show：数据>0显示 page：第几页，对应后端pageNum，limit：每页记录数，对应后端pageSize -->
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <!-- :visible.sync，vue标签，设置动态的显示内容与否 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
 
       <el-table
         :key="tableKey"
-        v-loading="listLoading"
         :data="temp.commodityDetailList"
         border
         fit
@@ -149,9 +143,8 @@
 
 <script>
 import { editOrderInfo, deleteOrderInfo, findOrderList } from '@/api/seller/order'
-
-import waves from '@/directive/waves' // waves directive
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import waves from '@/directive/waves'
+import Pagination from '@/components/Pagination'
 import { EventSourcePolyfill } from 'event-source-polyfill' // npm install --save event-source-polyfill
 import store from '@/store'
 
@@ -176,47 +169,26 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
-        title: undefined,
-        type: undefined,
-        message: ''
+        limit: 20
       },
-      showReviewer: false,
-      categoryList: [],
       temp: {
-        id: undefined,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'draft'
       },
-      fileList: [],
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         detail: '商品详情'
       },
-      dialogPvVisible: false,
-      pvData: [],
-      rules: {
-        name: [{ required: true, message: '商品名称必填', trigger: 'blur' }],
-        price: [{ required: true, message: '商品价格必填', trigger: 'blur' }],
-        checkBoxCategoryIdList: [{ required: true, message: '类目必选', trigger: 'change' }],
-        radioCategoryId: [{ required: true, message: '类目必选', trigger: 'change' }]
-      },
-      downloadLoading: false,
       // 创建sse
       eventSource: null,
       // 模拟登录用户 1681443270209
       userId: store.getters.userId
     }
   },
-  // created:在模板渲染成html前调用， mounted:在模板渲染成html后调用
   created() {
     this.getList()
+    // created:在模板渲染成html前调用， mounted:在模板渲染成html后调用
     // 页面加载时只执行 onload 事件。
     // 页面关闭时，先 onbeforeunload 事件，再 onunload 事件。
     // 页面刷新时先执行 onbeforeunload事件，然后 onunload 事件，最后 onload 事件。
@@ -227,9 +199,9 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
       var status = this.listQuery.status
       var statusList = []
+      // 添加文字，以文字筛选；未添加为true
       if ('已点单待支付'.search(status) !== -1) {
         statusList.push('TO_PAY')
       }
@@ -254,16 +226,11 @@ export default {
           this.total = response.data.total
         }
         setTimeout(() => {
-          this.listLoading = false
         }, 1.5 * 1000)
       })
     },
     createSse() {
       if (window.EventSource) {
-        // 根据环境的不同，变更url
-        // const url = process.env.VUE_APP_MSG_SERVER_URL
-
-        // todo
         // 浏览器控制台：TypeError: NetworkError when attempting to fetch resource.
         // 浏览器网络：  ns_binding_aborted
         // 原因：是因为fetch中异步提交方式,在请求该链接的时候第一次请求还没有执行完毕，如果又发生了第二次请求的话，
@@ -272,14 +239,6 @@ export default {
         const url = 'http://localhost:5000/sse/connect?userId=' + this.userId
         // this.eventSource = new EventSourcePolyfill(url)
         this.eventSource = new EventSourcePolyfill(url)
-        // , {
-        // 设置重连时间
-        // heartbeatTimeout: 60 * 60 * 1000
-        // 添加token
-        // headers: {
-        //   'Authorization': 'test token'
-        // }
-        // })
         this.eventSource.onopen = (e) => {
           console.log(this.getCurrentTime() + '步骤1：建立SSE连接~userId:' + this.userId)
           // console.log('步骤1：已建立SSE连接~:' + JSON.stringify(e))
@@ -322,49 +281,8 @@ export default {
       _this.gettime = '【' + yy + '-' + mm + '-' + dd + ' ' + hh + ':' + mf + ':' + ss + '】'
       return _this.gettime
     },
-    // beforeDestroy() {
-    //   if (this.eventSource) {
-    //     // 前端关闭Sse
-    //     this.eventSource.close()
-    //     // 通知后端关闭Sse 暂时不关闭后端，让后端push消息来删除后端Sse，
-    //     // 因为前端页面reload时，会新页面的建立Sse连接，快于旧页面的closeSse时间，导致刷新后Sse不可用，接收不到push消息
-    //     // this.closeSse()
-    //   }
-    // },
-    // closeSse() {
-    //   console.log(this.getCurrentTime() + '步骤3：关闭SSE连接~userId2:' + this.userId)
-    //   // 退出登录或关闭浏览器
-    //   if (this.eventSource) {
-    //     // 前端关闭Sse
-    //     console.log(this.getCurrentTime() + '步骤3：关闭SSE连接~userId1:' + this.userId)
-    //     this.eventSource.close()
-    //     // 通知后端关闭Sse 暂时不关闭后端，让后端push消息来删除后端Sse，
-    //     // 因为前端页面reload时，会新页面的建立Sse连接，快于旧页面的closeSse时间，导致刷新后Sse不可用，接收不到push消息
-    //     // var requestParam = {
-    //     //   userId: this.userId
-    //     // }
-    //     // closeSse(requestParam).then(() => {
-    //     //   this.eventSource = null
-    //     // })
-    //   }
-    // },
-    // destroyed() {
-    //   window.removeEventListener('beforeunload', this.closeSse())
-    // },
     handleFilter() {
-      this.listQuery.page = 1
       this.getList()
-    },
-    resetTemp() {
-      this.temp = {
-        id: undefined,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'draft',
-        type: '',
-        checkBoxCategoryIdList: []
-      }
     },
     handleDetail(row) {
       this.temp = Object.assign({}, row) // copy obj
@@ -376,8 +294,7 @@ export default {
       var requestParam = { orderId: this.temp.orderId }
       deleteOrderInfo(requestParam).then(() => {
         this.$notify({
-          title: 'Success',
-          message: 'Delete Successfully',
+          message: '删除订单成功',
           type: 'success',
           duration: 2000
         })
@@ -398,14 +315,12 @@ export default {
         this.list.splice(index, 1, this.temp)
         this.dialogFormVisible = false
         this.$notify({
-          title: 'Success',
           message: status === 'TO_ARRIVE' ? '已接单待配送' : status === 'FINISHED' ? '已完成' : '非预期操作',
           type: 'success',
           duration: 2000
         })
       })
     }
-    // handleDownload() {
   }
 }
 </script>

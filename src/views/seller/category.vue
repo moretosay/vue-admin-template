@@ -149,7 +149,7 @@
         <el-form-item v-if="ccr2DialogStatus==='create'" label="关联商品" prop="checkBoxCommodityIdList" label-width="120px">
           <el-checkbox-group v-model="ccrTemp.checkBoxCommodityIdList">
             <el-checkbox v-for="item in commodityList" :key="item.commodityId" :label="item.commodityId">
-              <span>{{ item.name }} 【商家ID1:{{ item.commodityId }}】</span>
+              <span>{{ item.name }} 【商品ID:{{ item.commodityId }}】</span>
             </el-checkbox>
           </el-checkbox-group>
           <!--<span style="color: green" >功能Tip：可关联多个商家，生成多个商品！</span>-->
@@ -158,7 +158,7 @@
         <el-form-item v-if="ccr2DialogStatus!=='create'" label="关联商品" prop="radioCommodityId" label-width="120px">
           <el-radio-group v-model="ccrTemp.radioCommodityId">
             <el-radio v-for="item in commodityList" :key="item.commodityId" :label="item.commodityId">
-              <span>{{ item.name }} 【商家ID:{{ item.commodityId }}】</span>
+              <span>{{ item.name }} 【商品ID:{{ item.commodityId }}】</span>
             </el-radio>
           </el-radio-group>
         </el-form-item>
@@ -474,8 +474,7 @@ export default {
       var requestParam = { categoryCommodityId: this.ccrTemp.categoryCommodityId }
       deleteCCRInfo(requestParam).then(() => {
         this.$notify({
-          title: 'Success',
-          message: 'Delete Successfully',
+          message: '删除关系成功',
           type: 'success',
           duration: 2000
         })

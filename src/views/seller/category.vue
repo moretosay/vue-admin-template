@@ -268,29 +268,29 @@ export default {
     handleFilter() {
       this.getList()
     },
-    getSellerList(){
+    getSellerList(handleType) {
       var requestBody = {
         pageNum: 1,
         pageSize: 10 // 大概率不会超过10个商家
       }
       findSellerList(requestBody).then(response => {
-        if(response.data != null){
+        if (response.data != null) {
           this.sellerList = response.data.list
         }
         setTimeout(() => {
         }, 1.5 * 1000)
+        if (handleType === 'create' && this.sellerList.length === 0) {
+          this.$notify({
+            message: '请先添加商家【移步商家管理】',
+            type: 'error',
+            duration: 2000
+          })
+          return
+        }
       })
     },
     handleCreate() {
-      this.getSellerList()
-      if (this.sellerList.length === 0) {
-        this.$notify({
-          message: '请先添加商家【移步商家管理】',
-          type: 'error',
-          duration: 2000
-        })
-        return
-      }
+      this.getSellerList('create')
       this.$set(this.temp, 'checkBoxSellerIdList', [])
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -319,7 +319,7 @@ export default {
       })
     },
     handleUpdate(row) {
-      this.getSellerList()
+      this.getSellerList('update')
       // 编辑时，回显已有数据
       this.temp = Object.assign({}, row) // copy obj
       this.$set(this.temp, 'radioSellerId', this.temp.sellerId)
@@ -370,7 +370,7 @@ export default {
       this.temp = Object.assign({}, row)
       var requestBody = {
         pageNum: 1,
-        pageSize: 30,  // 不可能超过30个商品吧
+        pageSize: 30, // 不可能超过30个商品吧
         categoryId: this.temp.categoryId
       }
       findCCRList(requestBody).then(response => {
@@ -386,7 +386,7 @@ export default {
       this.$nextTick(() => {
       })
     },
-    ccrFindCommodityList() {
+    ccrFindCommodityList(handleType) {
       var requestBody = {
         pageNum: 1,
         pageSize: 20// 不可能超过20个商家吧！
@@ -395,18 +395,18 @@ export default {
         this.commodityList = response.data.list
         setTimeout(() => {
         }, 1.5 * 1000)
+        if (handleType === 'create' && this.commodityList.length === 0) {
+          this.$notify({
+            message: '请先添加商品【移步商品管理】',
+            type: 'error',
+            duration: 2000
+          })
+          return
+        }
       })
     },
     ccrHandleCreate() {
-      this.ccrFindCommodityList()
-      if (this.commodityList.length === 0) {
-        this.$notify({
-          message: '请先添加商品【移步商品管理】',
-          type: 'error',
-          duration: 2000
-        })
-        return
-      }
+      this.ccrFindCommodityList('create')
       // 初始化ccrTemp.checkBoxCommodityIdList，否则此标签不展示
       this.$set(this.ccrTemp, 'checkBoxCommodityIdList', [])
       this.ccr2DialogStatus = 'create'
@@ -424,7 +424,9 @@ export default {
             sortNum: this.ccrTemp.sortNum
           }
           addCCRList(requestBody).then(response => {
-            this.ccr2DialogFormVisible = false
+            this.ccr2DialogFormVisible = true
+            // this.ccrDialogFormVisible = true 此处要回显数据，得将数据拆分后，添加到list中
+            // this.list.unshift(this.temp)
             this.$notify({
               message: '添加关系成功',
               type: 'success',
@@ -436,7 +438,7 @@ export default {
       })
     },
     ccrHandleUpdate(row) {
-      this.ccrFindCommodityList()
+      this.ccrFindCommodityList('update')
       this.ccrTemp = Object.assign({}, row)
       this.$set(this.ccrTemp, 'radioCommodityId', this.ccrTemp.commodityId)
       this.ccr2DialogStatus = 'update'

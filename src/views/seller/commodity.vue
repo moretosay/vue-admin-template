@@ -195,7 +195,7 @@ export default {
     handleFilter() {
       this.getList()
     },
-    findSellerList(){
+    findSellerList(handleType) {
       var requestBody = {
         pageNum: 1,
         pageSize: 20// 不可能超过20个商家吧！
@@ -206,21 +206,21 @@ export default {
         }
         setTimeout(() => {
         }, 1.5 * 1000)
+        if (handleType === 'create' && this.sellerList.length === 0) {
+          this.$notify({
+            message: '请先添加商家【移步商家管理】',
+            type: 'error',
+            duration: 2000
+          })
+          return
+        }
       })
     },
     handleChange(file, fileList) {
       this.fileList = fileList
     },
     handleCreate() {
-      this.findSellerList()
-      if (this.sellerList.length === 0) {
-        this.$notify({
-          message: '请先添加商家【移步商家管理】',
-          type: 'error',
-          duration: 2000
-        })
-        return
-      }
+      this.findSellerList('create')
       this.$set(this.temp, 'checkBoxSellerIdList', [])
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -271,7 +271,7 @@ export default {
       this.reload()
     },
     handleUpdate(row) {
-      this.findSellerList()
+      this.findSellerList('update')
       this.temp = Object.assign({}, row) // copy obj
       // this.temp.radioSellerId = this.temp.sellerId，此种方式赋值，radioSellerId对应的组件不可修改
       this.$set(this.temp, 'radioSellerId', this.temp.sellerId)

@@ -274,13 +274,23 @@ export default {
         pageSize: 10 // 大概率不会超过10个商家
       }
       findSellerList(requestBody).then(response => {
-        this.sellerList = response.data.list
+        if(response.data != null){
+          this.sellerList = response.data.list
+        }
         setTimeout(() => {
         }, 1.5 * 1000)
       })
     },
     handleCreate() {
       this.getSellerList()
+      if (this.sellerList.length === 0) {
+        this.$notify({
+          message: '请先添加商家【移步商家管理】',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
       this.$set(this.temp, 'checkBoxSellerIdList', [])
       this.dialogStatus = 'create'
       this.dialogFormVisible = true

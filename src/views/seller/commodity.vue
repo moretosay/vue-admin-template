@@ -203,7 +203,6 @@ export default {
       findSellerList(requestBody).then(response => {
         if (response.data != null) {
           this.sellerList = response.data.list
-          this.total = response.data.total
         }
         setTimeout(() => {
         }, 1.5 * 1000)
@@ -214,6 +213,14 @@ export default {
     },
     handleCreate() {
       this.findSellerList()
+      if (this.sellerList.length === 0) {
+        this.$notify({
+          message: '请先添加商家【移步商家管理】',
+          type: 'error',
+          duration: 2000
+        })
+        return
+      }
       this.$set(this.temp, 'checkBoxSellerIdList', [])
       this.dialogStatus = 'create'
       this.dialogFormVisible = true

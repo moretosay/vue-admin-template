@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function generateCheckCode(data) {
   return request({
-    url: 'http://localhost:5000/user/generateCheckCode',
+    url: '/user/generateCheckCode',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function generateCheckCode(data) {
 
 export function register(data) {
   return request({
-    url: 'http://localhost:5000/user/register',
+    url: '/user/register',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function register(data) {
 
 export function login(data) {
   return request({
-    url: 'http://localhost:5000/user/login',
+    url: '/user/login',
     method: 'post',
     data
   })
@@ -26,7 +26,7 @@ export function login(data) {
 
 export function getInfo(data) {
   return request({
-    url: 'http://localhost:5000/user/getUserInfo',
+    url: '/user/getUserInfo',
     method: 'get',
     params: data
   })
@@ -34,7 +34,7 @@ export function getInfo(data) {
 
 export function loginOut(data) {
   return request({
-    url: 'http://localhost:5000/user/loginOut',
+    url: '/user/loginOut',
     method: 'post',
     params: data
   })
@@ -42,7 +42,7 @@ export function loginOut(data) {
 
 export function forgetPassword(data) {
   return request({
-    url: 'http://localhost:5000/user/forgetPassword',
+    url: '/user/forgetPassword',
     method: 'post',
     data
   })
@@ -50,7 +50,7 @@ export function forgetPassword(data) {
 
 export function addUserInfo(data) {
   return request({
-    url: 'http://localhost:5000/user/addUserInfo',
+    url: '/user/addUserInfo',
     method: 'post',
     data
   })
@@ -58,7 +58,7 @@ export function addUserInfo(data) {
 
 export function editUserInfo(data) {
   return request({
-    url: 'http://localhost:5000/user/editUserInfo',
+    url: '/user/editUserInfo',
     method: 'post',
     data
   })
@@ -66,7 +66,7 @@ export function editUserInfo(data) {
 
 export function deleteUserInfo(data) {
   return request({
-    url: 'http://localhost:5000/user/deleteUserInfo',
+    url: '/user/deleteUserInfo',
     method: 'post',
     params: data
   })
@@ -74,7 +74,7 @@ export function deleteUserInfo(data) {
 
 export function findUserList(data) {
   return request({
-    url: 'http://localhost:5000/user/findUserList',
+    url: '/user/findUserList',
     method: 'post',
     data
   })

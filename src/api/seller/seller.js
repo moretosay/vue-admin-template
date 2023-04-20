@@ -2,10 +2,7 @@ import request from '@/utils/request'
 
 export function addSellerInfo(data) {
   return request({
-    url: 'http://localhost:5000/seller/addSellerInfo',
-    // headers: {
-    //   'Content-Type': 'application/x-www-form-urlencoded'
-    // },
+    url: '/seller/addSellerInfo',
     method: 'post',
     data
   })
@@ -13,7 +10,7 @@ export function addSellerInfo(data) {
 
 export function addSellerInfoContainPic(data) {
   return request({
-    url: 'http://localhost:5000/seller/addSellerInfoContainPic',
+    url: '/seller/addSellerInfoContainPic',
     headers: {
       'Content-Type': 'multipart/form-data'
     },
@@ -24,7 +21,7 @@ export function addSellerInfoContainPic(data) {
 
 export function editSellerInfo(data) {
   return request({
-    url: 'http://localhost:5000/seller/editSellerInfo',
+    url: '/seller/editSellerInfo',
     method: 'post',
     data
   })
@@ -32,7 +29,7 @@ export function editSellerInfo(data) {
 
 export function editSellerInfoContainPic(data) {
   return request({
-    url: 'http://localhost:5000/seller/editSellerInfoContainPic',
+    url: '/seller/editSellerInfoContainPic',
     headers: {
       'Content-Type': 'multipart/form-data'
     },
@@ -43,7 +40,7 @@ export function editSellerInfoContainPic(data) {
 
 export function deleteSellerInfo(data) {
   return request({
-    url: 'http://localhost:5000/seller/deleteSellerInfo',
+    url: '/seller/deleteSellerInfo',
     method: 'post',
     params: data
   })
@@ -51,7 +48,7 @@ export function deleteSellerInfo(data) {
 
 export function findSellerList(data) {
   return request({
-    url: 'http://localhost:5000/seller/findSellerList',
+    url: '/seller/findSellerList',
     method: 'post',
     data
   })

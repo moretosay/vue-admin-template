@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addCCRList(data) {
   return request({
-    url: 'http://localhost:5000/seller/ccr/addCCRList',
+    url: '/seller/ccr/addCCRList',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function addCCRList(data) {
 
 export function editCCRInfo(data) {
   return request({
-    url: 'http://localhost:5000/seller/ccr/editCCRInfo',
+    url: '/seller/ccr/editCCRInfo',
     method: 'post',
     data
   })
@@ -18,7 +18,7 @@ export function editCCRInfo(data) {
 
 export function deleteCCRInfo(data) {
   return request({
-    url: 'http://localhost:5000/seller/ccr/deleteCCRInfo',
+    url: '/seller/ccr/deleteCCRInfo',
     method: 'post',
     params: data
   })
@@ -26,7 +26,7 @@ export function deleteCCRInfo(data) {
 
 export function findCCRList(data) {
   return request({
-    url: 'http://localhost:5000/seller/ccr/findCCRList',
+    url: '/seller/ccr/findCCRList',
     method: 'post',
     data
   })

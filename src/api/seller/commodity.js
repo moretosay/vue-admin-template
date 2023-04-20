@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export function addCommodityList(data) {
   return request({
-    url: 'http://localhost:5000/seller/commodity/addCommodityList',
+    url: '/seller/commodity/addCommodityList',
     method: 'post',
     data
   })
@@ -10,7 +10,7 @@ export function addCommodityList(data) {
 
 export function addCommodityListContainPic(data) {
   return request({
-    url: 'http://localhost:5000/seller/commodity/addCommodityListContainPic',
+    url: '/seller/commodity/addCommodityListContainPic',
     headers: {
       'Content-Type': 'multipart/form-data'
     },
@@ -21,7 +21,7 @@ export function addCommodityListContainPic(data) {
 
 export function editCommodityInfo(data) {
   return request({
-    url: 'http://localhost:5000/seller/commodity/editCommodityInfo',
+    url: '/seller/commodity/editCommodityInfo',
     method: 'post',
     data
   })
@@ -29,7 +29,7 @@ export function editCommodityInfo(data) {
 
 export function editCommodityInfoContainPic(data) {
   return request({
-    url: 'http://localhost:5000/seller/commodity/editCommodityInfoContainPic',
+    url: '/seller/commodity/editCommodityInfoContainPic',
     headers: {
       'Content-Type': 'multipart/form-data'
     },
@@ -40,7 +40,7 @@ export function editCommodityInfoContainPic(data) {
 
 export function deleteCommodityInfo(data) {
   return request({
-    url: 'http://localhost:5000/seller/commodity/deleteCommodityInfo',
+    url: '/seller/commodity/deleteCommodityInfo',
     method: 'post',
     params: data
   })
@@ -48,7 +48,7 @@ export function deleteCommodityInfo(data) {
 
 export function findCommodityList(data) {
   return request({
-    url: 'http://localhost:5000/seller/commodity/findCommodityList',
+    url: '/seller/commodity/findCommodityList',
     method: 'post',
     data
   })

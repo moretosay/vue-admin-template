@@ -10,15 +10,15 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Dashboard',
-  computed: {
-    ...mapGetters([
-      'name'
-    ])
-  },
   data() {
     return {
       imgUrl: process.env.VUE_APP_BASE_URL + '/file/image/index.jpg'
     }
+  },
+  computed: {
+    ...mapGetters([
+      'name'
+    ])
   }
 }
 </script>

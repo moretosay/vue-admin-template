@@ -1,6 +1,6 @@
 module.exports = {
 
-  title: 'Vue Admin Template',
+  title: '商家后台管理系统',
 
   /**
    * @type {boolean} true | false
@@ -9,6 +9,7 @@ module.exports = {
   fixedHeader: false,
 
   /**
+   * 设置左侧导航栏默认展示
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */

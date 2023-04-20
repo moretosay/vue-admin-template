@@ -1,5 +1,6 @@
 <template>
   <div :class="{'has-logo':showLogo}">
+    <!-- 设置左侧导航栏默认展示 -->
     <logo v-if="showLogo" :collapse="isCollapse" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
@@ -29,7 +30,7 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-       // 加入
+      // 加入
       'permission_routes'
     ]),
     routes() {

@@ -285,8 +285,8 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.roleCodeList=[],
-      this.temp.sellerIdList=[]
+      this.temp.roleCodeList = []
+      this.temp.sellerIdList = []
       this.commonCreateUpdateData()
       this.dialogStatus = 'update'
       this.dialogFormVisible = true

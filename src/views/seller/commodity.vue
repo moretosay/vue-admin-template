@@ -18,7 +18,6 @@
       fit
       highlight-current-row
       style="width: 940px;"
-      @sort-change="sortChange"
     >
       <el-table-column label="商品ID" prop="id" align="center" width="70px">
         <template slot-scope="{row}">
@@ -144,7 +143,6 @@ import { addCommodityList, addCommodityListContainPic, editCommodityInfo, editCo
 import { findSellerList } from '@/api/seller/seller'
 
 import waves from '@/directive/waves' // waves directive
-// import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 export default {
@@ -233,20 +231,6 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
     resetTemp() {
       this.temp = {
         id: undefined,
@@ -258,6 +242,9 @@ export default {
         type: '',
         checkBoxSellerIdList: []
       }
+    },
+    handleChange(file, fileList) {
+      this.fileList = fileList
     },
     handleCreate() {
       // 新增商品时，查询当前用户下的类目，后续进行权限控制  todo
@@ -282,9 +269,6 @@ export default {
       })
     },
     // 通过onchanne触发方法获得文件列表
-    handleChange(file, fileList) {
-      this.fileList = fileList
-    },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
@@ -319,13 +303,16 @@ export default {
       })
     },
     commonCreateData(response) {
+      // 单条新增角色，把角色手动添加到table中，不用reload刷，体验和性能赶不上这个
+      this.list.unshift(this.temp)
+      this.dialogFormVisible = true
       this.$notify({
-        title: 'Success',
-        message: 'Created Successfully',
+        title: '新增商品成功',
+        message: '新增商品成功',
         type: 'success',
         duration: 2000
       })
-      this.reload()
+      // this.reload()
     },
     handleUpdate(row) {
       // 编辑类目时，查询当前用户下的商家，后续进行权限控制  todo

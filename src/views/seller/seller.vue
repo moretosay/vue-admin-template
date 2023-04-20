@@ -2,26 +2,22 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.name" placeholder="商家名称关键字" style="width: 130px; height: 50px" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" style="margin-left: 5px" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 5px" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增商家
-      </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
-        导出商家
       </el-button>
     </div>
 
+    <!-- v-loading="listLoading" 搜索时，刷页面转圈圈的效果，本来数据都出来了，因为这个效果让我等，感觉没意义 -->
     <el-table
       :key="tableKey"
-      v-loading="listLoading"
       :data="list"
       border
       fit
       highlight-current-row
       style="width: 1155px;"
-      @sort-change="sortChange"
     >
       <el-table-column label="商家ID" align="center" width="70px">
         <template slot-scope="{row}">
@@ -153,10 +149,10 @@
 </template>
 
 <script>
-import { addSellerInfo, addSellerInfoContainPic, editSellerInfo, editSellerInfoContainPic, deleteSellerInfo, findSellerList } from '@/api/seller/seller'
-import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { addSellerInfo, addSellerInfoContainPic, editSellerInfo,
+  editSellerInfoContainPic, deleteSellerInfo, findSellerList } from '@/api/seller/seller'
+import waves from '@/directive/waves'
+import Pagination from '@/components/Pagination'
 
 export default {
   inject: ['reload'],
@@ -178,27 +174,12 @@ export default {
       tableKey: 0,
       list: null,
       total: 0,
-      listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        limit: 10
       },
-      importanceOptions: [1, 2, 3],
-      // calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['published', 'draft', 'deleted'],
-      showReviewer: false,
       temp: {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
         status: 'draft'
       },
       fileList: [],
@@ -208,16 +189,13 @@ export default {
         update: '编辑商家',
         create: '新增商家'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
         name: [{ required: true, message: '商家名称必填', trigger: 'blur' }],
         summary: [{ required: true, message: '商家简介必填', trigger: 'blur' }],
         businessStartTime: [{ required: true, message: '营业开始时间必填', trigger: 'change' }],
         businessEndTime: [{ required: true, message: '营业结束时间必填', trigger: 'change' }],
         minAmount: [{ required: true, message: '最小起送费必填', trigger: 'blur' }]
-      },
-      downloadLoading: false
+      }
     }
   },
   created() {
@@ -225,7 +203,6 @@ export default {
   },
   methods: {
     getList() {
-      this.listLoading = true
       var requestBody = {
         pageNum: this.listQuery.page,
         pageSize: this.listQuery.limit,
@@ -237,50 +214,22 @@ export default {
           this.total = response.data.total
         }
         setTimeout(() => {
-          this.listLoading = false
         }, 1.5 * 1000)
       })
     },
     handleFilter() {
-      this.listQuery.page = 1
       this.getList()
     },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
-    resetTemp() {
-      this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'draft',
-        type: ''
-      }
+    // 此方法触发获得上传列表
+    handleChange(file, fileList) {
+      this.fileList = fileList
     },
     handleCreate() {
-      this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
-    },
-    // 通过onchanne触发方法获得文件列表
-    handleChange(file, fileList) {
-      this.fileList = fileList
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -312,23 +261,19 @@ export default {
       })
     },
     commonCreateData(response) {
-      // 将最新sellerId赋值展示
+      // 新增商家回显
       this.temp.sellerId = response.data
       this.list.unshift(this.temp)
+      // 关闭新增商家窗口
       this.dialogFormVisible = false
-      // // 上传成功后，将空间释放，不展示文件图标
-      // this.fileList = []
       this.$notify({
-        title: 'Success',
-        message: 'Created Successfully',
+        message: '新增商家成功',
         type: 'success',
         duration: 2000
       })
-      this.reload()
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -365,27 +310,23 @@ export default {
       })
     },
     commonUpdateData() {
-      // const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
-      // // 展示框中更新对应记录
-      // this.list.splice(index, 1, this.temp)
-      // this.dialogFormVisible = false
-      // 编辑上传成功后，将空间释放，不展示文件图标
-      // this.fileList = []
+      // 编辑商家回显
+      const index = this.list.findIndex(v => v.sellerId === this.temp.sellerId)
+      // 展示框中更新对应记录
+      this.list.splice(index, 1, this.temp)
+      this.dialogFormVisible = false
       this.$notify({
-        title: 'Success',
-        message: 'Update Successfully',
+        message: '编辑商家成功',
         type: 'success',
         duration: 2000
       })
-      this.reload()
     },
     handleDelete(row, index) {
-      this.temp = Object.assign({}, row) // copy obj
+      this.temp = Object.assign({}, row)
       var requestParam = { sellerId: this.temp.sellerId }
       deleteSellerInfo(requestParam).then(() => {
         this.$notify({
-          title: 'Success',
-          message: 'Delete Successfully',
+          message: '删除商家成功',
           type: 'success',
           duration: 2000
         })
@@ -394,7 +335,7 @@ export default {
       })
     },
     handleModifyStatus(row, status) {
-      this.temp = Object.assign({}, row) // copy obj
+      this.temp = Object.assign({}, row)
       var requestBody = {
         sellerId: this.temp.sellerId,
         status: status
@@ -406,39 +347,11 @@ export default {
         this.list.splice(index, 1, this.temp)
         this.dialogFormVisible = false
         this.$notify({
-          title: 'Success',
           message: status === 'published' ? '商家发布成功' : '商家已下线',
           type: 'success',
           duration: 2000
         })
       })
-    },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['商家ID', '商家名称', '商家简介', '营业开始时间', '营业结束时间', '最小起送费', '配送费', 'status']
-        const filterVal = ['sellerId', 'name', 'summary', 'businessStartTime', 'businessEndTime', 'minAmount', 'expressFee', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
-    },
-    getSortClass: function(key) {
-      // const sort = this.listQuery.sort
-      // return sort === `+${key}` ? 'ascending' : 'descending'
     }
   }
 }

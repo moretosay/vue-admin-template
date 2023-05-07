@@ -36,9 +36,14 @@
           <span v-if="scope.row.logoPicUrl == null"> 待上传</span>
         </template>
       </el-table-column>
-      <el-table-column label="商家简介" width="150px" align="center">
+      <el-table-column label="商家公告" width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.summary }}</span>
+          <span>{{ row.notice }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="商家招呼" width="150px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.greet }}</span>
         </template>
       </el-table-column>
       <el-table-column label="营业开始时间" width="105px" align="center">
@@ -66,6 +71,11 @@
           <el-tag :type="row.status | statusFilter">
             {{ row.status }}
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="商家地址" width="150px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.address }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="235px" class-name="small-padding fixed-width">
@@ -96,8 +106,11 @@
         <el-form-item label="商家名称" prop="name" label-width="120px">
           <el-input v-model="temp.name" placeholder="请输入商家名称" style="width: 200px;" />
         </el-form-item>
-        <el-form-item label="商家简介" prop="summary" label-width="120px">
-          <el-input v-model="temp.summary" class="summary" placeholder="请输入商家简介" style="width: 200px;" />
+        <el-form-item label="* 商家公告" prop="notice" label-width="120px">
+          <el-input v-model="temp.notice" placeholder="请输入商家公告" style="width: 200px;" />
+        </el-form-item>
+        <el-form-item label="* 商家招呼" prop="greet" label-width="120px">
+          <el-input v-model="temp.greet"  placeholder="请输入商家招呼" style="width: 200px;" />
         </el-form-item>
 
         <el-form-item label="营业开始时间" prop="businessStartTime" label-width="120px">
@@ -115,11 +128,27 @@
         <el-form-item label="最小起送费" prop="minAmount" label-width="120px">
           <el-input v-model="temp.minAmount" class="minAmount" placeholder="请输入最小起送费" style="width: 200px;" /> 元
         </el-form-item>
-        <el-form-item label="# 配送费" prop="expressFee" label-width="120px" align="left">
+        <el-form-item label="* 配送费" prop="expressFee" label-width="120px" align="left">
           <el-input v-model="temp.expressFee" class="expressFee" placeholder="请输入配送费" style="width: 200px;" /> 元
         </el-form-item>
 
-        <el-form-item label="# Logo图片" prop="logoPicUrl" label-width="120px">
+        <el-form-item label="* 小程序appid" prop="appid" label-width="120px">
+          <el-input v-model="temp.appid"  placeholder="请输入小程序appid" style="width: 200px;" />
+        </el-form-item>
+        <el-form-item label="* 小程序secret" prop="secret" label-width="120px">
+          <el-input v-model="temp.secret"  placeholder="请输入小程序secret" style="width: 200px;" />
+        </el-form-item>
+        <el-form-item label="* 商家地址" prop="address" label-width="120px">
+          <el-input v-model="temp.address"  placeholder="请输入小程序address" style="width: 200px;" />
+        </el-form-item>
+        <el-form-item label="* 商品制作时间" prop="pickUpTime" label-width="120px">
+          <el-input v-model="temp.pickUpTime"  placeholder="请输入商品制作时间" style="width: 200px;" /> min
+        </el-form-item>
+        <el-form-item label="* 商品配送时间" prop="deliveryTime" label-width="120px">
+          <el-input v-model="temp.deliveryTime"  placeholder="请输入商品制作时间" style="width: 200px;" /> min
+        </el-form-item>
+
+        <el-form-item label="* Logo图片" prop="logoPicUrl" label-width="120px">
           <el-upload
             ref="upfile"
             style="display: inline"
@@ -243,12 +272,18 @@ export default {
             // 上传logoPic提交
             const fd = new FormData()
             fd.append('name', this.temp.name)
-            fd.append('summary', this.temp.summary)
+            fd.append('notice', this.temp.notice)
             fd.append('businessStartTime', this.temp.businessStartTime)
             fd.append('businessEndTime', this.temp.businessEndTime)
             fd.append('minAmount', this.temp.minAmount)
             fd.append('expressFee', this.temp.expressFee)
             fd.append('status', this.temp.status)
+            fd.append('greet', this.temp.greet)
+            fd.append('appid', this.temp.appid)
+            fd.append('secret', this.temp.secret)
+            fd.append('address', this.temp.address)
+            fd.append('pickUpTime', this.temp.pickUpTime)
+            fd.append('deliveryTime', this.temp.deliveryTime)
             this.fileList.forEach(item => {
               // 文件信息中raw才是真的文件
               fd.append('logoPicFile', item.raw)
@@ -299,6 +334,12 @@ export default {
             fd.append('minAmount', this.temp.minAmount)
             fd.append('expressFee', this.temp.expressFee)
             fd.append('status', this.temp.status)
+            fd.append('greet', this.temp.greet)
+            fd.append('appid', this.temp.appid)
+            fd.append('secret', this.temp.secret)
+            fd.append('address', this.temp.address)
+            fd.append('pickUpTime', this.temp.pickUpTime)
+            fd.append('deliveryTime', this.temp.deliveryTime)
             this.fileList.forEach(item => {
               fd.append('logoPicFile', item.raw)
             })
